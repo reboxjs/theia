@@ -8028,6 +8028,10 @@ vscode-languageserver@^3.4.0, vscode-languageserver@^3.4.3:
     vscode-languageserver-protocol "^3.5.0"
     vscode-uri "^1.0.1"
 
+vscode-ripgrep@0.7.1-patch.0:
+  version "0.7.1-patch.0"
+  resolved "https://registry.yarnpkg.com/vscode-ripgrep/-/vscode-ripgrep-0.7.1-patch.0.tgz#738be8b6da5cb9a8807b528595a884b0dfcb60a5"
+
 vscode-uri@^1.0.0, vscode-uri@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/vscode-uri/-/vscode-uri-1.0.1.tgz#11a86befeac3c4aa3ec08623651a3c81a6d0bbc8"
