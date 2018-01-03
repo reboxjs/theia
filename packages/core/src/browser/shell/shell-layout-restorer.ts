@@ -4,14 +4,15 @@
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
+
 import { injectable, inject } from 'inversify';
-import { FrontendApplication, FrontendApplicationContribution } from './frontend-application';
-import { WidgetManager, WidgetConstructionOptions } from './widget-manager';
-import { StorageService } from './storage-service';
-import { LayoutData } from './shell';
 import { Widget } from '@phosphor/widgets';
-import { ILogger } from '../common/logger';
-import { CommandContribution, CommandRegistry } from '../common/command';
+import { FrontendApplication, FrontendApplicationContribution } from '../frontend-application';
+import { WidgetManager, WidgetConstructionOptions } from '../widget-manager';
+import { StorageService } from '../storage-service';
+import { ILogger } from '../../common/logger';
+import { CommandContribution, CommandRegistry } from '../../common/command';
+import { ApplicationShell } from './application-shell';
 
 /**
  * A contract for widgets that want to store and restore their inner state, between sessions.
@@ -98,7 +99,7 @@ export class ShellLayoutRestorer implements CommandContribution {
     /**
      * Turns the layout data to a string representation.
      */
-    protected deflate(data: LayoutData): string {
+    protected deflate(data: ApplicationShell.LayoutData): string {
         return JSON.stringify(data, (property: string, value) => {
             if (this.isWidgetsProperty(property)) {
                 const result: WidgetDescription[] = [];
@@ -124,7 +125,7 @@ export class ShellLayoutRestorer implements CommandContribution {
     /**
      * Creates the layout data from its string representation.
      */
-    protected inflate(layoutData: string): Promise<LayoutData> {
+    protected inflate(layoutData: string): Promise<ApplicationShell.LayoutData> {
         const pending: Promise<void>[] = [];
         const result = JSON.parse(layoutData, (property: string, value) => {
             if (this.isWidgetsProperty(property)) {
