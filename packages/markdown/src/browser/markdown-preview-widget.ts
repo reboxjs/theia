@@ -64,5 +64,6 @@ export class MarkdownPreviewWidget extends BaseWidget implements StatefulWidget 
         if (resource.onDidChangeContents) {
             this.toDispose.push(resource.onDidChangeContents(() => this.update()));
         }
+        this.update();
     }
 }
