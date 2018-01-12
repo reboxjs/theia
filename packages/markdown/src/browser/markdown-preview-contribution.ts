@@ -110,7 +110,10 @@ export class MarkdownPreviewContribution implements CommandContribution, MenuCon
             uri: uri.toString()
         });
 
-        this.app.shell.addToMainArea(widget);
+        const options: ApplicationShell.IMainAreaOptions = (this.widgets.size > 0)
+            ? { mode: 'tab-after', ref: this.widgets.values().next().value }
+            : { mode: 'split-right' };
+        this.app.shell.addToMainArea(widget, options);
         widget.start(markdownUri);
         return widget;
     }
