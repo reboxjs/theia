@@ -416,12 +416,12 @@ export class ApplicationShell extends Widget {
      * All widgets added to the main area should be disposed after removal (or
      * simply disposed in order to remove).
      */
-    addToMainArea(widget: Widget): void {
+    addToMainArea(widget: Widget, options: ApplicationShell.IMainAreaOptions = { mode: 'tab-after' }): void {
         if (!widget.id) {
             console.error('widgets added to app shell must have unique id property');
             return;
         }
-        this._dockPanel.addWidget(widget, { mode: 'tab-after' });
+        this._dockPanel.addWidget(widget, options);
         this.track(widget);
     }
 
@@ -707,6 +707,13 @@ namespace ApplicationShell {
          * The rank order of the widget among its siblings.
          */
         rank?: number;
+    }
+
+    /**
+     * The options for adding a widget to a main area of the shell.
+     */
+    export
+        interface IMainAreaOptions extends DockLayout.IAddOptions {
     }
 
     /**
