@@ -6,14 +6,14 @@
  */
 
 import { injectable, inject } from "inversify";
-import { FrontendApplicationContribution, FrontendApplication, OpenHandler } from "@theia/core/lib/browser";
+import { FrontendApplicationContribution, FrontendApplication, OpenHandler, ApplicationShell } from "@theia/core/lib/browser";
 import { EDITOR_CONTEXT_MENU, EditorManager } from '@theia/editor/lib/browser';
 import { CommandContribution, CommandRegistry, Command, MenuContribution, MenuModelRegistry, CommandHandler } from "@theia/core/lib/common";
 import { WidgetManager } from '@theia/core/lib/browser/widget-manager';
 import URI from '@theia/core/lib/common/uri';
-import { ResourceProvider } from '@theia/core/lib/common';
 import { MarkdownUri } from './markdown-uri';
 import { MarkdownPreviewWidget } from './markdown-preview-widget';
+import { MARKDOWN_PREVIEW_WIDGET_FACTORY_ID, MarkdownPreviewOptions } from './markdown-preview-widget-factory';
 
 export namespace MarkdownPreviewCommands {
     export const OPEN: Command = {
@@ -28,17 +28,13 @@ export class MarkdownPreviewContribution implements CommandContribution, MenuCon
     readonly id = MarkdownPreviewCommands.OPEN.id;
     readonly label = MarkdownPreviewCommands.OPEN.label;
 
-    protected widgetSequence = 0;
-    protected readonly widgets = new Map<string, Promise<MarkdownPreviewWidget>>();
+    protected readonly widgets = new Map<string, MarkdownPreviewWidget>();
 
     @inject(FrontendApplication)
     protected readonly app: FrontendApplication;
 
     @inject(MarkdownUri)
     protected readonly markdownUri: MarkdownUri;
-
-    @inject(ResourceProvider)
-    protected readonly resourceProvider: ResourceProvider;
 
     @inject(WidgetManager)
     protected readonly widgetManager: WidgetManager;
@@ -58,7 +54,7 @@ export class MarkdownPreviewContribution implements CommandContribution, MenuCon
         }
     }
 
-    async open(uri: URI): Promise<MarkdownPreviewWidget | undefined> {
+    async open(uri: URI): Promise<MarkdownPreviewWidget> {
         const widget = await this.getWidget(uri);
         this.app.shell.activateMain(widget.id);
         return widget;
@@ -66,7 +62,7 @@ export class MarkdownPreviewContribution implements CommandContribution, MenuCon
 
     registerCommands(registry: CommandRegistry): void {
         registry.registerCommand(MarkdownPreviewCommands.OPEN, <CommandHandler>{
-            execute: async () => this.openForActiveEditor(),
+            execute: () => this.openForActiveEditor(),
             isEnabled: () => this.isMarkdownEditorOpened(),
             isVisible: () => this.isMarkdownEditorOpened(),
         });
@@ -88,35 +84,34 @@ export class MarkdownPreviewContribution implements CommandContribution, MenuCon
         return activeEditor.editor.uri.path.ext === '.md';
     }
 
-    protected async openForActiveEditor(): Promise<void> {
+    protected openForActiveEditor(): void {
         const activeEditor = this.editorManager.currentEditor;
         if (activeEditor) {
-            await this.open(activeEditor.editor.uri);
+            this.open(activeEditor.editor.uri);
         }
     }
 
-    protected getWidget(uri: URI): Promise<MarkdownPreviewWidget> {
-        const widget = this.widgets.get(uri.toString());
+    protected async getWidget(uri: URI): Promise<MarkdownPreviewWidget> {
+        let widget = this.widgets.get(uri.toString());
         if (widget) {
             return widget;
         }
-        const promise = this.createWidget(uri);
-        promise.then(w => w.disposed.connect(() =>
+        widget = await this.createWidget(uri);
+        widget.disposed.connect(() =>
             this.widgets.delete(uri.toString())
-        ));
-        this.widgets.set(uri.toString(), promise);
-        return promise;
+        );
+        this.widgets.set(uri.toString(), widget);
+        return widget;
     }
 
     protected async createWidget(uri: URI): Promise<MarkdownPreviewWidget> {
         const markdownUri = this.markdownUri.to(uri);
-        const resource = await this.resourceProvider(markdownUri);
-        const widget = new MarkdownPreviewWidget(resource);
-        widget.id = `markdown-preview-` + this.widgetSequence++;
-        widget.title.label = `Preview '${uri.path.base}'`;
-        widget.title.caption = widget.title.label;
-        widget.title.closable = true;
+        const widget = <MarkdownPreviewWidget>await this.widgetManager.getOrCreateWidget(MARKDOWN_PREVIEW_WIDGET_FACTORY_ID, <MarkdownPreviewOptions>{
+            uri: uri.toString()
+        });
+
         this.app.shell.addToMainArea(widget);
+        widget.start(markdownUri);
         return widget;
     }
 

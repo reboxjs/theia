@@ -5,23 +5,28 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+import { inject, injectable } from "inversify";
 import { Resource } from '@theia/core';
-import { BaseWidget, Message } from '@theia/core/lib/browser';
+import { BaseWidget, Message, StatefulWidget } from '@theia/core/lib/browser';
+import URI from '@theia/core/lib/common/uri';
+import { ResourceProvider } from '@theia/core/lib/common';
 
 export const MARKDOWN_WIDGET_CLASS = 'theia-markdown-widget';
 
-export class MarkdownPreviewWidget extends BaseWidget {
+@injectable()
+export class MarkdownPreviewWidget extends BaseWidget implements StatefulWidget {
+
+    protected resource: Resource;
+    protected uri: URI;
+
+    @inject(ResourceProvider)
+    protected readonly resourceProvider: ResourceProvider;
 
     constructor(
-        protected readonly resource: Resource
     ) {
         super();
         this.addClass(MARKDOWN_WIDGET_CLASS);
         this.node.tabIndex = 0;
-        this.toDispose.push(resource);
-        if (resource.onDidChangeContents) {
-            this.toDispose.push(resource.onDidChangeContents(() => this.update()));
-        }
         this.update();
     }
 
@@ -33,9 +38,31 @@ export class MarkdownPreviewWidget extends BaseWidget {
 
     onUpdateRequest(msg: Message): void {
         super.onUpdateRequest(msg);
-        this.resource.readContents().then(html =>
-            this.node.innerHTML = html
-        );
+        if (this.resource) {
+            this.resource.readContents().then(html =>
+                this.node.innerHTML = html
+            );
+        }
     }
 
+    storeState(): object {
+        return { uri: this.resource.uri.toString() };
+    }
+
+    restoreState(oldState: object) {
+        const state = oldState as any;
+        if (state.uri) {
+            const uri = this.uri = new URI(state.uri);
+            this.start(uri);
+        }
+    }
+
+    async start(uri: URI): Promise<void> {
+        this.uri = uri;
+        const resource = this.resource = await this.resourceProvider(uri);
+        this.toDispose.push(resource);
+        if (resource.onDidChangeContents) {
+            this.toDispose.push(resource.onDidChangeContents(() => this.update()));
+        }
+    }
 }
