@@ -79,7 +79,7 @@ export class MarkdownPreviewWidget extends BaseWidget implements StatefulWidget 
             matchedElement = element;
         }
         if (matchedElement) {
-            matchedElement.scrollIntoView();
+            matchedElement.scrollIntoView({ behavior: 'smooth' });
         }
     }
 }
