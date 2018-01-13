@@ -66,4 +66,20 @@ export class MarkdownPreviewWidget extends BaseWidget implements StatefulWidget 
         }
         this.update();
     }
+
+    revealForSourceLine(sourceLine: number): void {
+        const markedElements = this.node.getElementsByClassName('line');
+        let matchedElement: Element | undefined;
+        for (let i = 0; i < markedElements.length; i++) {
+            const element = markedElements[i];
+            const line = Number.parseInt(element.getAttribute('data-line') || '0');
+            if (line > sourceLine) {
+                break;
+            }
+            matchedElement = element;
+        }
+        if (matchedElement) {
+            matchedElement.scrollIntoView();
+        }
+    }
 }

@@ -9,8 +9,10 @@ import { injectable, inject } from "inversify";
 import { FrontendApplicationContribution, FrontendApplication, OpenHandler, ApplicationShell } from "@theia/core/lib/browser";
 import { EDITOR_CONTEXT_MENU, EditorManager } from '@theia/editor/lib/browser';
 import { CommandContribution, CommandRegistry, Command, MenuContribution, MenuModelRegistry, CommandHandler } from "@theia/core/lib/common";
+import { DisposableCollection } from '@theia/core';
 import { WidgetManager } from '@theia/core/lib/browser/widget-manager';
 import URI from '@theia/core/lib/common/uri';
+import { Position } from 'vscode-languageserver-types';
 import { MarkdownUri } from './markdown-uri';
 import { MarkdownPreviewWidget } from './markdown-preview-widget';
 import { MARKDOWN_PREVIEW_WIDGET_FACTORY_ID, MarkdownPreviewOptions } from './markdown-preview-widget-factory';
@@ -29,6 +31,7 @@ export class MarkdownPreviewContribution implements CommandContribution, MenuCon
     readonly label = MarkdownPreviewCommands.OPEN.label;
 
     protected readonly widgets = new Map<string, MarkdownPreviewWidget>();
+    protected readonly disposables = new DisposableCollection();
 
     @inject(FrontendApplication)
     protected readonly app: FrontendApplication;
@@ -43,6 +46,29 @@ export class MarkdownPreviewContribution implements CommandContribution, MenuCon
     protected readonly editorManager: EditorManager;
 
     async initializeLayout(app: FrontendApplication): Promise<void> {
+    }
+
+    onStart() {
+        this.syncWithCurrentEditor();
+    }
+
+    protected async syncWithCurrentEditor(): Promise<void> {
+        this.editorManager.onCurrentEditorChanged(async editorWidget => {
+            if (!editorWidget) {
+                return;
+            }
+            this.disposables.dispose();
+            const editor = editorWidget.editor;
+            this.disposables.push(editor.onCursorPositionChanged(position => this.syncWithCursorPosition(editor.uri.toString(), position)));
+        });
+    }
+
+    protected syncWithCursorPosition(uri: string, position: Position): void {
+        const widget = this.widgets.get(uri);
+        if (!widget) {
+            return;
+        }
+        widget.revealForSourceLine(position.line);
     }
 
     canHandle(uri: URI): number {

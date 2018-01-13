@@ -7,7 +7,7 @@
 
 import { ContainerModule } from 'inversify';
 import { ResourceResolver, CommandContribution, MenuContribution } from '@theia/core/lib/common';
-import { OpenHandler, WidgetFactory } from '@theia/core/lib/browser';
+import { OpenHandler, WidgetFactory, FrontendApplicationContribution } from '@theia/core/lib/browser';
 import { MarkdownUri } from './markdown-uri';
 import { MarkdownPreviewContribution } from './markdown-preview-contribution';
 import { MarkdownResourceResolver } from './markdown-resource';
@@ -26,6 +26,7 @@ export default new ContainerModule(bind => {
     bind(CommandContribution).toDynamicValue(ctx => ctx.container.get(MarkdownPreviewContribution));
     bind(MenuContribution).toDynamicValue(ctx => ctx.container.get(MarkdownPreviewContribution));
     bind(OpenHandler).toDynamicValue(ctx => ctx.container.get(MarkdownPreviewContribution)).inSingletonScope();
+    bind(FrontendApplicationContribution).toDynamicValue(c => c.container.get(MarkdownPreviewContribution));
 
     bind(MarkdownResourceResolver).toSelf().inSingletonScope();
     bind(ResourceResolver).toDynamicValue(ctx => ctx.container.get(MarkdownResourceResolver)).inSingletonScope();

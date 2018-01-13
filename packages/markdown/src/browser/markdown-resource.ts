@@ -93,7 +93,7 @@ export class MarkdownResourceResolver implements ResourceResolver {
     protected engine: markdownit.MarkdownIt | undefined;
     protected getEngine(): markdownit.MarkdownIt {
         if (!this.engine) {
-            this.engine = markdownit({
+            const engine: markdownit.MarkdownIt = this.engine = markdownit({
                 html: true,
                 linkify: true,
                 highlight: (str, lang) => {
@@ -102,9 +102,20 @@ export class MarkdownResourceResolver implements ResourceResolver {
                             return '<pre class="hljs"><code>' + hljs.highlight(lang, str, true).value + '</code></pre>';
                         } catch { }
                     }
-                    return '<pre class="hljs"><code>' + this.engine!.utils.escapeHtml(str) + '</code></pre>';
+                    return '<pre class="hljs"><code>' + engine.utils.escapeHtml(str) + '</code></pre>';
                 }
             });
+            const indexingTokenRenderer: markdownit.TokenRender = (tokens, index, options, env, self) => {
+                const token = tokens[index];
+                if (token.map && token.level === 0) {
+                    const line = token.map[0];
+                    token.attrJoin('class', 'line');
+                    token.attrSet('data-line', line.toString());
+                }
+                return self.renderToken(tokens, index, options);
+            };
+            engine.renderer.rules.heading_open = indexingTokenRenderer;
+            engine.renderer.rules.paragraph_open = indexingTokenRenderer;
         }
         return this.engine;
     }
