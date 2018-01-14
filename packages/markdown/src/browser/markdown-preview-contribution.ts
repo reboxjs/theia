@@ -30,7 +30,7 @@ export class MarkdownPreviewContribution implements CommandContribution, MenuCon
     readonly id = MarkdownPreviewCommands.OPEN.id;
     readonly label = MarkdownPreviewCommands.OPEN.label;
 
-    protected readonly widgets = new Map<string, MarkdownPreviewWidget>();
+    protected readonly cachedWidgets = new Map<string, MarkdownPreviewWidget>();
     protected readonly disposables = new DisposableCollection();
 
     @inject(FrontendApplication)
@@ -44,9 +44,6 @@ export class MarkdownPreviewContribution implements CommandContribution, MenuCon
 
     @inject(EditorManager)
     protected readonly editorManager: EditorManager;
-
-    async initializeLayout(app: FrontendApplication): Promise<void> {
-    }
 
     onStart() {
         this.syncWithCurrentEditor();
@@ -63,8 +60,16 @@ export class MarkdownPreviewContribution implements CommandContribution, MenuCon
         });
     }
 
+    protected getPreviewWidgets(): Map<string, MarkdownPreviewWidget> {
+        if (this.cachedWidgets.size === 0) {
+            const previewWidgets = this.widgetManager.getWidgets(MARKDOWN_PREVIEW_WIDGET_FACTORY_ID);
+            previewWidgets.forEach(widget => this.addPreviewWidget(widget as MarkdownPreviewWidget));
+        }
+        return this.cachedWidgets;
+    }
+
     protected syncWithCursorPosition(uri: string, position: Position): void {
-        const widget = this.widgets.get(uri);
+        const widget = this.getPreviewWidgets().get(uri);
         if (!widget) {
             return;
         }
@@ -81,7 +86,7 @@ export class MarkdownPreviewContribution implements CommandContribution, MenuCon
     }
 
     async open(uri: URI): Promise<MarkdownPreviewWidget> {
-        const widget = await this.getWidget(uri);
+        const widget = await this.getOrCreateWidget(uri);
         this.app.shell.activateMain(widget.id);
         return widget;
     }
@@ -117,30 +122,34 @@ export class MarkdownPreviewContribution implements CommandContribution, MenuCon
         }
     }
 
-    protected async getWidget(uri: URI): Promise<MarkdownPreviewWidget> {
-        let widget = this.widgets.get(uri.toString());
+    protected async getOrCreateWidget(uri: URI): Promise<MarkdownPreviewWidget> {
+        const widget = this.getPreviewWidgets().get(uri.toString());
         if (widget) {
             return widget;
         }
-        widget = await this.createWidget(uri);
+        const newWidget = await this.createWidget(uri);
+        return newWidget;
+    }
+
+    protected addPreviewWidget(widget: MarkdownPreviewWidget): void {
+        const uri = widget.uri;
         widget.disposed.connect(() =>
-            this.widgets.delete(uri.toString())
+            this.cachedWidgets.delete(uri.toString())
         );
-        this.widgets.set(uri.toString(), widget);
-        return widget;
+        this.cachedWidgets.set(uri.toString(), widget);
     }
 
     protected async createWidget(uri: URI): Promise<MarkdownPreviewWidget> {
-        const markdownUri = this.markdownUri.to(uri);
+        const previewWidgets = this.getPreviewWidgets();
         const widget = <MarkdownPreviewWidget>await this.widgetManager.getOrCreateWidget(MARKDOWN_PREVIEW_WIDGET_FACTORY_ID, <MarkdownPreviewOptions>{
             uri: uri.toString()
         });
-
-        const options: ApplicationShell.IMainAreaOptions = (this.widgets.size > 0)
-            ? { mode: 'tab-after', ref: this.widgets.values().next().value }
+        const options: ApplicationShell.IMainAreaOptions = (previewWidgets.size > 0)
+            ? { mode: 'tab-after', ref: previewWidgets.values().next().value }
             : { mode: 'split-right' };
         this.app.shell.addToMainArea(widget, options);
-        widget.start(markdownUri);
+        this.addPreviewWidget(widget);
+        await widget.start();
         return widget;
     }
 

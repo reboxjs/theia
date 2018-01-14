@@ -33,6 +33,7 @@ export class MarkdownPreviewWidgetFactory implements WidgetFactory {
         widget.title.label = `Preview '${uri.path.base}'`;
         widget.title.caption = widget.title.label;
         widget.title.closable = true;
+        widget.uri = uri;
         return widget;
     }
 

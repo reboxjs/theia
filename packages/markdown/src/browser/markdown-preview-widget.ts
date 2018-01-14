@@ -10,6 +10,7 @@ import { Resource } from '@theia/core';
 import { BaseWidget, Message, StatefulWidget } from '@theia/core/lib/browser';
 import URI from '@theia/core/lib/common/uri';
 import { ResourceProvider } from '@theia/core/lib/common';
+import { MarkdownUri } from './markdown-uri';
 
 export const MARKDOWN_WIDGET_CLASS = 'theia-markdown-widget';
 
@@ -17,7 +18,10 @@ export const MARKDOWN_WIDGET_CLASS = 'theia-markdown-widget';
 export class MarkdownPreviewWidget extends BaseWidget implements StatefulWidget {
 
     protected resource: Resource;
-    protected uri: URI;
+    protected _uri: URI;
+
+    @inject(MarkdownUri)
+    protected readonly markdownUri: MarkdownUri;
 
     @inject(ResourceProvider)
     protected readonly resourceProvider: ResourceProvider;
@@ -28,6 +32,14 @@ export class MarkdownPreviewWidget extends BaseWidget implements StatefulWidget 
         this.addClass(MARKDOWN_WIDGET_CLASS);
         this.node.tabIndex = 0;
         this.update();
+    }
+
+    get uri(): URI {
+        return this._uri;
+    }
+
+    set uri(newUri: URI) {
+        this._uri = newUri;
     }
 
     onActivateRequest(msg: Message): void {
@@ -46,20 +58,20 @@ export class MarkdownPreviewWidget extends BaseWidget implements StatefulWidget 
     }
 
     storeState(): object {
-        return { uri: this.resource.uri.toString() };
+        return { uri: this.uri.toString() };
     }
 
     restoreState(oldState: object) {
         const state = oldState as any;
         if (state.uri) {
-            const uri = this.uri = new URI(state.uri);
-            this.start(uri);
+            this.uri = new URI(state.uri);
+            this.start();
         }
     }
 
-    async start(uri: URI): Promise<void> {
-        this.uri = uri;
-        const resource = this.resource = await this.resourceProvider(uri);
+    async start(): Promise<void> {
+        const markdownUri = this.markdownUri.to(this.uri);
+        const resource = this.resource = await this.resourceProvider(markdownUri);
         this.toDispose.push(resource);
         if (resource.onDidChangeContents) {
             this.toDispose.push(resource.onDidChangeContents(() => this.update()));
