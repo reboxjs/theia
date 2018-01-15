@@ -9,7 +9,6 @@ import { injectable, inject } from "inversify";
 import { ResourceResolver, Resource, ResourceProvider, DisposableCollection, Emitter, Event } from "@theia/core";
 import { TextDocument, DidChangeTextDocumentParams } from "@theia/languages/lib/common";
 import URI from "@theia/core/lib/common/uri";
-import { FileSystem } from '@theia/filesystem/lib/common';
 import { Workspace } from '@theia/languages/lib/common';
 import { MarkdownUri } from "./markdown-uri";
 
@@ -46,11 +45,13 @@ export class MarkdownResource implements Resource {
     get onDidChangeContents(): Event<void> {
         return this.onDidChangeContentsEmitter.event;
     }
+
     protected fireDidChangeContents(affectedUri?: string): void {
         if (this.shouldFireDidChangeContents(affectedUri)) {
             this.onDidChangeContentsEmitter.fire(undefined);
         }
     }
+
     protected shouldFireDidChangeContents(affectedUri?: string): boolean {
         return !affectedUri || affectedUri === this.originalUri;
     }
@@ -71,9 +72,6 @@ export class MarkdownResource implements Resource {
 
 @injectable()
 export class MarkdownResourceResolver implements ResourceResolver {
-
-    @inject(FileSystem)
-    protected readonly fileSystem: FileSystem;
 
     @inject(MarkdownUri)
     protected readonly markdownUri: MarkdownUri;
