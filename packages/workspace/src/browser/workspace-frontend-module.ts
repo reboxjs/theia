@@ -8,11 +8,9 @@
 import { ContainerModule, interfaces } from 'inversify';
 import { CommandContribution, MenuContribution } from "@theia/core/lib/common";
 import { WebSocketConnectionProvider, FrontendApplicationContribution } from '@theia/core/lib/browser';
-import { FileDialogFactory, createFileDialog, FileDialogProps } from '@theia/filesystem/lib/browser';
 import { StorageService } from '@theia/core/lib/browser/storage-service';
 import { LabelProviderContribution } from '@theia/core/lib/browser/label-provider';
 import { WorkspaceServer, workspacePath } from '../common';
-import { WorkspaceFrontendContribution } from "./workspace-frontend-contribution";
 import { WorkspaceService } from './workspace-service';
 import { WorkspaceCommandContribution, FileMenuContribution } from './workspace-commands';
 import { WorkspaceStorageService } from './workspace-storage-service';
@@ -26,17 +24,6 @@ export default new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Un
         return provider.createProxy<WorkspaceServer>(workspacePath);
     }).inSingletonScope();
 
-    bind(WorkspaceFrontendContribution).toSelf().inSingletonScope();
-    for (const identifier of [CommandContribution, MenuContribution]) {
-        bind(identifier).toDynamicValue(ctx =>
-            ctx.container.get(WorkspaceFrontendContribution)
-        ).inSingletonScope();
-    }
-
-    bind(FileDialogFactory).toFactory(ctx =>
-        (props: FileDialogProps) =>
-            createFileDialog(ctx.container, props)
-    );
     bind(CommandContribution).to(WorkspaceCommandContribution).inSingletonScope();
     bind(MenuContribution).to(FileMenuContribution).inSingletonScope();
 

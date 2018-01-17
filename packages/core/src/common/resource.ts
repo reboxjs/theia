@@ -43,6 +43,7 @@ export class DefaultResourceProvider {
      */
     async get(uri: URI): Promise<Resource> {
         const resolvers = this.resolversProvider.getContributions();
+        console.log('resolvers', resolvers);
         for (const resolver of resolvers) {
             try {
                 return await resolver.resolve(uri);

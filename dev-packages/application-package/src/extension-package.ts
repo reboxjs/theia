@@ -12,9 +12,7 @@ import { NpmRegistry, PublishedNodePackage, NodePackage } from './npm-registry';
 
 export interface Extension {
     frontend?: string;
-    frontendElectron?: string;
     backend?: string;
-    backendElectron?: string;
 }
 
 export class ExtensionPackage {

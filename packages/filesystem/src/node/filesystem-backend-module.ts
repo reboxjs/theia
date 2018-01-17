@@ -9,7 +9,9 @@ import * as cluster from 'cluster';
 import { ContainerModule, interfaces } from "inversify";
 import { ConnectionHandler, JsonRpcConnectionHandler, ILogger } from "@theia/core/lib/common";
 import { FileSystemNode } from './node-filesystem';
-import { FileSystemWatcher, FileSystem, FileSystemClient, fileSystemPath, bindFileSystemPreferences } from "../common";
+import {
+    FileSystemWatcher, FileSystem, FileSystemClient, fileSystemPath,
+} from "../common";
 import { FileSystemWatcherServer, FileSystemWatcherClient, fileSystemWatcherPath } from '../common/filesystem-watcher-protocol';
 import { FileSystemWatcherServerClient } from './filesystem-watcher-client';
 import { NsfwFileSystemWatcherServer } from './nsfw-watcher/nsfw-filesystem-watcher';
@@ -37,7 +39,6 @@ export function bindFileSystemWatcherServer(bind: interfaces.Bind): void {
 }
 
 export default new ContainerModule(bind => {
-    bindFileSystemPreferences(bind);
 
     bindFileSystem(bind);
     bind(ConnectionHandler).toDynamicValue(ctx =>

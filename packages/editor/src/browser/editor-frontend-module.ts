@@ -16,13 +16,10 @@ import { EditorContribution } from './editor-contribution';
 import { EditorMenuContribution } from './editor-menu';
 import { EditorCommandContribution } from './editor-command';
 import { EditorKeybindingContribution, EditorKeybindingContext } from "./editor-keybinding";
-import { bindEditorPreferences } from './editor-preferences';
 import { LabelProviderContribution } from '@theia/core/lib/browser/label-provider';
 import { DiffUriLabelProviderContribution } from './diff-uris';
 
 export default new ContainerModule(bind => {
-    bindEditorPreferences(bind);
-
     bind(EditorManagerImpl).toSelf().inSingletonScope();
     bind(EditorManager).toDynamicValue(c => c.container.get(EditorManagerImpl)).inSingletonScope();
     bind(WidgetFactory).toDynamicValue(c => c.container.get(EditorManagerImpl)).inSingletonScope();

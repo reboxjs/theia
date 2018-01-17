@@ -8,8 +8,9 @@
 import { injectable, inject } from "inversify";
 import { Disposable, DisposableCollection, Emitter, Event } from '@theia/core/lib/common';
 import URI from '@theia/core/lib/common/uri';
-import { DidFilesChangedParams, FileChangeType, FileSystemWatcherServer, WatchOptions } from './filesystem-watcher-protocol';
-import { FileSystemPreferences } from "./filesystem-preferences";
+import {
+    DidFilesChangedParams, FileChangeType, FileSystemWatcherServer,
+} from './filesystem-watcher-protocol';
 
 export {
     FileChangeType
@@ -29,7 +30,6 @@ export class FileSystemWatcher implements Disposable {
 
     constructor(
         @inject(FileSystemWatcherServer) protected readonly server: FileSystemWatcherServer,
-        @inject(FileSystemPreferences) protected readonly preferences: FileSystemPreferences
     ) {
         this.toDispose.push(this.onFileChangedEmitter);
 
@@ -37,13 +37,6 @@ export class FileSystemWatcher implements Disposable {
         server.setClient({
             onDidFilesChanged: e => this.onDidFilesChanged(e)
         });
-
-        this.toDispose.push(preferences);
-        this.toDispose.push(preferences.onPreferenceChanged(e => {
-            if (e.preferenceName === 'files.watcherExclude') {
-                this.toRestartAll.dispose();
-            }
-        }));
     }
 
     /**
@@ -62,48 +55,10 @@ export class FileSystemWatcher implements Disposable {
     }
 
     /**
-     * Start file watching under the given uri.
-     *
-     * Resolve when watching is started.
-     * Return a disposable to stop file watching under the given uri.
-     */
-    watchFileChanges(uri: URI): Promise<Disposable> {
-        return this.createWatchOptions()
-            .then(options =>
-                this.server.watchFileChanges(uri.toString(), options)
-            )
-            .then(watcher => {
-                const toDispose = new DisposableCollection();
-                const toStop = Disposable.create(() =>
-                    this.server.unwatchFileChanges(watcher)
-                );
-                const toRestart = toDispose.push(toStop);
-                this.toRestartAll.push(Disposable.create(() => {
-                    toRestart.dispose();
-                    toStop.dispose();
-                    this.watchFileChanges(uri).then(disposable =>
-                        toDispose.push(disposable)
-                    );
-                }));
-                return toDispose;
-            });
-    }
-
-    /**
      * Emit when files under watched uris are changed.
      */
     get onFilesChanged(): Event<FileChange[]> {
         return this.onFileChangedEmitter.event;
     }
 
-    protected createWatchOptions(): Promise<WatchOptions> {
-        return this.getIgnored().then(ignored => ({
-            ignored
-        }));
-    }
-
-    protected getIgnored(): Promise<string[]> {
-        const patterns = this.preferences['files.watcherExclude'];
-        return Promise.resolve(Object.keys(patterns).filter(pattern => patterns[pattern]));
-    }
 }

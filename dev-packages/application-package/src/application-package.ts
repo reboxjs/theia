@@ -123,7 +123,7 @@ export class ApplicationPackage {
 
     get frontendElectronModules(): Map<string, string> {
         if (!this._frontendElectronModules) {
-            this._frontendElectronModules = this.computeModules('frontendElectron', 'frontend');
+            this._frontendElectronModules = this.computeModules('frontend');
         }
         return this._frontendElectronModules;
     }
@@ -137,7 +137,7 @@ export class ApplicationPackage {
 
     get backendElectronModules(): Map<string, string> {
         if (!this._backendElectronModules) {
-            this._backendElectronModules = this.computeModules('backendElectron', 'backend');
+            this._backendElectronModules = this.computeModules('backend');
         }
         return this._backendElectronModules;
     }

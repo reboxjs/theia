@@ -15,9 +15,9 @@
       "@theia/core/lib/*": [
         "packages/core/src/*"
       ],
-      "@theia/extension-manager/lib/*": [
-        "packages/extension-manager/src/*"
-      ],
+      // "@theia/extension-manager/lib/*": [
+      //   "packages/extension-manager/src/*"
+      // ],
       "@theia/filesystem/lib/*": [
         "packages/filesystem/src/*"
       ],
@@ -27,24 +27,24 @@
       "trash": [
         "packages/filesystem/src/typings/trash"
       ],
-      "@theia/navigator/lib/*": [
-        "packages/navigator/src/*"
-      ],
-      "@theia/preferences-api": [
-        "packages/preferences-api/src/common"
-      ],
-      "@theia/preferences-api/lib/*": [
-        "packages/preferences-api/src/*"
-      ],
-      "@theia/preferences/lib/*": [
-        "packages/preferences/src/*"
-      ],
+      // "@theia/navigator/lib/*": [
+      //   "packages/navigator/src/*"
+      // ],
+      // "@theia/preferences-api": [
+      //   "packages/preferences-api/src/common"
+      // ],
+      // "@theia/preferences-api/lib/*": [
+      //   "packages/preferences-api/src/*"
+      // ],
+      // "@theia/preferences/lib/*": [
+      //   "packages/preferences/src/*"
+      // ],
       "@theia/workspace/lib/*": [
         "packages/workspace/src/*"
       ],
-      "@theia/terminal/lib/*": [
-        "packages/terminal/src/*"
-      ],
+      // "@theia/terminal/lib/*": [
+      //   "packages/terminal/src/*"
+      // ],
       "@theia/languages/lib/*": [
         "packages/languages/src/*"
       ],
@@ -54,29 +54,26 @@
       "@theia/monaco/lib/*": [
         "packages/monaco/src/*"
       ],
-      "@theia/cpp/lib/*": [
-        "packages/cpp/src/*"
-      ],
-      "@theia/java/lib/*": [
-        "packages/java/src/*"
-      ],
-      "@theia/python/lib/*": [
-        "packages/python/src/*"
-      ],
-      "@theia/git/lib/*": [
-        "git/src/*"
-      ],
-      "@theia/process/lib*": [
-        "packages/process/src/*"
-      ],
-      "@theia/markers/lib/*": [
-        "packages/markers/src/*"
-      ],
+      // "@theia/cpp/lib/*": [
+      //   "packages/cpp/src/*"
+      // ],
+      // "@theia/java/lib/*": [
+      //   "packages/java/src/*"
+      // ],
+      // "@theia/python/lib/*": [
+      //   "packages/python/src/*"
+      // ],
+      // "@theia/git/lib/*": [
+      //   "git/src/*"
+      // ],
+      // "@theia/process/lib*": [
+      //   "packages/process/src/*"
+      // ],
+      // "@theia/markers/lib/*": [
+      //   "packages/markers/src/*"
+      // ],
       "@theia/outline/lib/*": [
         "packages/outline/src/*"
-      ],
-      "@theia/messages/lib/*": [
-        "packages/messages/src/*"
       ]
     }
   },

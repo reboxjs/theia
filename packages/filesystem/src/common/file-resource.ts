@@ -62,9 +62,6 @@ export class FileResourceResolver implements ResourceResolver {
     ) { }
 
     resolve(uri: URI): MaybePromise<FileResource> {
-        if (uri.scheme !== 'file') {
-            throw new Error('The given uri is not file uri: ' + uri);
-        }
         return this.fileSystem.getFileStat(uri.toString()).then(fileStat => {
             if (!fileStat.isDirectory) {
                 return new FileResource(uri, fileStat, this.fileSystem, this.fileSystemWatcher);

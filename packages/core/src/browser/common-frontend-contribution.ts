@@ -19,18 +19,6 @@ export namespace CommonMenus {
 
     export const FILE = [...MAIN_MENU_BAR, '1_file'];
     export const FILE_NEW = [...FILE, '1_new'];
-    export const FILE_OPEN = [...FILE, '2_open'];
-    export const FILE_SAVE = [...FILE, '3_save'];
-
-    export const EDIT = [...MAIN_MENU_BAR, '2_edit'];
-    export const EDIT_UNDO = [...EDIT, '1_undo'];
-    export const EDIT_CLIPBOARD = [...EDIT, '2_clipboard'];
-    export const EDIT_FIND = [...EDIT, '3_find'];
-
-    export const VIEW = [...MAIN_MENU_BAR, '3_view'];
-
-    export const HELP = [...MAIN_MENU_BAR, "4_help"];
-
 }
 
 export namespace CommonCommands {
@@ -119,40 +107,6 @@ export class CommonFrontendContribution implements MenuContribution, CommandCont
 
     registerMenus(registry: MenuModelRegistry): void {
         registry.registerSubmenu(CommonMenus.FILE, 'File');
-        registry.registerSubmenu(CommonMenus.EDIT, 'Edit');
-        registry.registerSubmenu(CommonMenus.VIEW, 'View');
-        registry.registerSubmenu(CommonMenus.HELP, 'Help');
-
-        registry.registerMenuAction(CommonMenus.EDIT_UNDO, {
-            commandId: CommonCommands.UNDO.id,
-            order: '0'
-        });
-        registry.registerMenuAction(CommonMenus.EDIT_UNDO, {
-            commandId: CommonCommands.REDO.id,
-            order: '1'
-        });
-
-        registry.registerMenuAction(CommonMenus.EDIT_FIND, {
-            commandId: CommonCommands.FIND.id,
-            order: '0'
-        });
-        registry.registerMenuAction(CommonMenus.EDIT_FIND, {
-            commandId: CommonCommands.REPLACE.id,
-            order: '1'
-        });
-
-        registry.registerMenuAction(CommonMenus.EDIT_CLIPBOARD, {
-            commandId: CommonCommands.CUT.id,
-            order: '0'
-        });
-        registry.registerMenuAction(CommonMenus.EDIT_CLIPBOARD, {
-            commandId: CommonCommands.COPY.id,
-            order: '1'
-        });
-        registry.registerMenuAction(CommonMenus.EDIT_CLIPBOARD, {
-            commandId: CommonCommands.PASTE.id,
-            order: '2'
-        });
 
         registry.registerMenuAction(MAINAREA_TABBAR_CONTEXT_MENU, {
             commandId: CommonCommands.CLOSE_TAB.id,
@@ -169,13 +123,6 @@ export class CommonFrontendContribution implements MenuContribution, CommandCont
         registry.registerMenuAction(MAINAREA_TABBAR_CONTEXT_MENU, {
             commandId: CommonCommands.CLOSE_ALL_TABS.id,
             order: '3'
-        });
-
-        registry.registerMenuAction(CommonMenus.FILE_SAVE, {
-            commandId: CommonCommands.SAVE.id
-        });
-        registry.registerMenuAction(CommonMenus.FILE_SAVE, {
-            commandId: CommonCommands.SAVE_ALL.id
         });
     }
 

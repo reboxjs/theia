@@ -12,4 +12,3 @@ export * from './editor-command';
 export * from './editor-menu';
 export * from './editor-keybinding';
 export * from './editor-frontend-module';
-export * from './editor-preferences';

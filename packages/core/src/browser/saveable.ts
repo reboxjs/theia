@@ -6,9 +6,7 @@
  */
 
 import { Widget } from '@phosphor/widgets';
-import { Message } from '@phosphor/messaging';
-import { Event, MaybePromise, Key } from '../common';
-import { AbstractDialog } from './dialogs';
+import { Event, MaybePromise } from '../common';
 
 export interface Saveable {
     readonly dirty: boolean;
@@ -61,10 +59,10 @@ export namespace Saveable {
             const close = widget.close.bind(widget);
             widget.close = async () => {
                 if (saveable.dirty) {
-                    const dialog = new ShouldSaveDialog(widget);
-                    if (await dialog.open()) {
-                        await Saveable.save(widget);
-                    }
+                    // const dialog = new ShouldSaveDialog(widget);
+                    // if (await dialog.open()) {
+                    //     await Saveable.save(widget);
+                    // }
                 }
                 close();
             };
@@ -84,34 +82,34 @@ export function setDirty(widget: Widget, dirty: boolean): void {
     }
 }
 
-export class ShouldSaveDialog extends AbstractDialog<boolean> {
+// export class ShouldSaveDialog extends AbstractDialog<boolean> {
 
-    protected shouldSave = true;
-    protected readonly dontSaveButton: HTMLButtonElement;
+//     protected shouldSave = true;
+//     protected readonly dontSaveButton: HTMLButtonElement;
 
-    constructor(widget: Widget) {
-        super({
-            title: `Do you want to save the changes you made to ${widget.title.label || widget.title.caption}?`
-        });
+//     constructor(widget: Widget) {
+//         super({
+//             title: `Do you want to save the changes you made to ${widget.title.label || widget.title.caption}?`
+//         });
 
-        const messageNode = document.createElement("div");
-        messageNode.textContent = "Your change will be lost if you don't save them.";
-        messageNode.setAttribute('style', 'flex: 1 100%; padding-bottom: calc(var(--theia-ui-padding)*3);');
-        this.contentNode.appendChild(messageNode);
-        this.contentNode.appendChild(this.dontSaveButton = this.createButton("Don't Save"));
-        this.appendCloseButton();
-        this.appendAcceptButton('Save');
-    }
+//         const messageNode = document.createElement("div");
+//         messageNode.textContent = "Your change will be lost if you don't save them.";
+//         messageNode.setAttribute('style', 'flex: 1 100%; padding-bottom: calc(var(--theia-ui-padding)*3);');
+//         this.contentNode.appendChild(messageNode);
+//         this.contentNode.appendChild(this.dontSaveButton = this.createButton("Don't Save"));
+//         this.appendCloseButton();
+//         this.appendAcceptButton('Save');
+//     }
 
-    protected onAfterAttach(msg: Message): void {
-        super.onAfterAttach(msg);
-        this.addKeyListener(this.dontSaveButton, Key.ENTER, () => {
-            this.shouldSave = false;
-            this.accept();
-        }, 'click');
-    }
+//     protected onAfterAttach(msg: Message): void {
+//         super.onAfterAttach(msg);
+//         this.addKeyListener(this.dontSaveButton, Key.ENTER, () => {
+//             this.shouldSave = false;
+//             this.accept();
+//         }, 'click');
+//     }
 
-    get value(): boolean {
-        return this.shouldSave;
-    }
-}
+//     get value(): boolean {
+//         return this.shouldSave;
+//     }
+// }

@@ -13,8 +13,8 @@ import { MenuContribution, MenuModelRegistry } from '@theia/core/lib/common/menu
 import { CommonMenus } from "@theia/core/lib/browser/common-frontend-contribution";
 import { FileSystem, FileStat } from '@theia/filesystem/lib/common/filesystem';
 import { UriSelection } from '@theia/filesystem/lib/common/filesystem-selection';
-import { SingleTextInputDialog, ConfirmDialog } from "@theia/core/lib/browser/dialogs";
-import { OpenerService, OpenHandler, open, FrontendApplication } from "@theia/core/lib/browser";
+import { SingleTextInputDialog } from "@theia/core/lib/browser/dialogs";
+import { OpenerService, open, FrontendApplication } from "@theia/core/lib/browser";
 import { WorkspaceService } from './workspace-service';
 
 const validFilename = require('valid-filename');
@@ -24,27 +24,6 @@ export namespace WorkspaceCommands {
         id: 'file.newFile',
         label: 'New File'
     };
-    export const NEW_FOLDER: Command = {
-        id: 'file.newFolder',
-        label: 'New Folder'
-    };
-    export const FILE_OPEN: Command = {
-        id: 'file.open',
-        label: 'Open'
-    };
-    export const FILE_OPEN_WITH = (opener: OpenHandler): Command => ({
-        id: `file.openWith.${opener.id}`,
-        label: opener.label,
-        iconClass: opener.iconClass
-    });
-    export const FILE_RENAME: Command = {
-        id: 'file.rename',
-        label: 'Rename'
-    };
-    export const FILE_DELETE: Command = {
-        id: 'file.delete',
-        label: 'Delete'
-    };
 }
 
 @injectable()
@@ -53,9 +32,6 @@ export class FileMenuContribution implements MenuContribution {
     registerMenus(registry: MenuModelRegistry) {
         registry.registerMenuAction(CommonMenus.FILE_NEW, {
             commandId: WorkspaceCommands.NEW_FILE.id
-        });
-        registry.registerMenuAction(CommonMenus.FILE_NEW, {
-            commandId: WorkspaceCommands.NEW_FOLDER.id
         });
     }
 }
@@ -71,20 +47,6 @@ export class WorkspaceCommandContribution implements CommandContribution {
     ) { }
 
     registerCommands(registry: CommandRegistry): void {
-        registry.registerCommand(WorkspaceCommands.FILE_OPEN, this.newFileHandler({
-            execute: uri => open(this.openerService, uri)
-        }));
-        this.openerService.getOpeners().then(openers => {
-            for (const opener of openers) {
-                const openWithCommand = WorkspaceCommands.FILE_OPEN_WITH(opener);
-                registry.registerCommand(openWithCommand, this.newFileHandler({
-                    execute: uri => opener.open(uri),
-                    isEnabled: uri => opener.canHandle(uri) !== 0,
-                    isVisible: uri => opener.canHandle(uri) !== 0
-                }));
-            }
-        });
-
         registry.registerCommand(WorkspaceCommands.NEW_FILE, this.newWorkspaceHandler({
             execute: uri => this.getDirectory(uri).then(parent => {
                 const parentUri = new URI(parent.uri);
@@ -101,44 +63,6 @@ export class WorkspaceCommandContribution implements CommandContribution {
                     });
                 });
             })
-        }));
-        registry.registerCommand(WorkspaceCommands.NEW_FOLDER, this.newWorkspaceHandler({
-            execute: uri => this.getDirectory(uri).then(parent => {
-                const parentUri = new URI(parent.uri);
-                const vacantChildUri = this.findVacantChildUri(parentUri, parent, 'Untitled');
-                const dialog = new SingleTextInputDialog({
-                    title: `New Folder`,
-                    initialValue: vacantChildUri.path.base,
-                    validate: name => this.validateFileName(name, parent)
-                });
-                dialog.open().then(name =>
-                    this.fileSystem.createFolder(parentUri.resolve(name).toString())
-                );
-            })
-        }));
-
-        registry.registerCommand(WorkspaceCommands.FILE_RENAME, this.newFileHandler({
-            execute: uri => this.getParent(uri).then(parent => {
-                const dialog = new SingleTextInputDialog({
-                    title: 'Rename File',
-                    initialValue: uri.path.base,
-                    validate: name => this.validateFileName(name, parent)
-                });
-                dialog.open().then(name =>
-                    this.fileSystem.move(uri.toString(), uri.parent.resolve(name).toString())
-                );
-            })
-        }));
-        registry.registerCommand(WorkspaceCommands.FILE_DELETE, this.newFileHandler({
-            execute: async uri => {
-                const dialog = new ConfirmDialog({
-                    title: 'Delete File',
-                    msg: `Do you really want to delete '${uri.path.base}'?`
-                });
-                if (await dialog.open()) {
-                    await this.fileSystem.delete(uri.toString());
-                }
-            }
         }));
     }
 

@@ -7,7 +7,6 @@
 
 import { DisposableCollection } from '@theia/core/lib/common';
 import URI from '@theia/core/lib/common/uri';
-import { EditorPreferenceChange, EditorPreferences } from '@theia/editor/lib/browser';
 import { DiffUris } from '@theia/editor/lib/browser/diff-uris';
 import { inject, injectable } from 'inversify';
 import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from 'monaco-languageclient';
@@ -44,17 +43,19 @@ export class MonacoEditorProvider {
         @inject(ProtocolToMonacoConverter) protected readonly p2m: ProtocolToMonacoConverter,
         @inject(MonacoWorkspace) protected readonly workspace: MonacoWorkspace,
         @inject(MonacoCommandServiceFactory) protected readonly commandServiceFactory: MonacoCommandServiceFactory,
-        @inject(EditorPreferences) protected readonly editorPreferences: EditorPreferences,
         @inject(MonacoQuickOpenService) protected readonly quickOpenService: MonacoQuickOpenService
     ) { }
 
     protected async getModel(uri: URI, toDispose: DisposableCollection): Promise<MonacoEditorModel> {
         const reference = await this.textModelService.createModelReference(uri);
+        console.log('reference', reference);
         toDispose.push(reference);
         return reference.object;
     }
 
     protected createEditor(create: (n: HTMLDivElement, o: IEditorOverrideServices) => MonacoEditor, toDispose: DisposableCollection): MonacoEditor {
+        console.log('createEditor');
+
         const node = document.createElement('div');
         const commandService = this.commandServiceFactory();
         const { editorService, textModelService, contextMenuService } = this;
@@ -67,7 +68,6 @@ export class MonacoEditorProvider {
 
         const editor = create(node, override);
 
-        toDispose.push(this.editorPreferences.onPreferenceChanged(e => this.updateOptions(e, editor)));
         editor.onDispose(() => toDispose.dispose());
         const standaloneCommandService = new monaco.services.StandaloneCommandService(editor.instantiationService);
         commandService.setDelegate(standaloneCommandService);
@@ -77,14 +77,12 @@ export class MonacoEditorProvider {
     }
 
     async get(uri: URI): Promise<MonacoEditor> {
-        await this.editorPreferences.ready;
 
         let editor: MonacoEditor;
         const toDispose = new DisposableCollection();
 
         if (!DiffUris.isDiffUri(uri)) {
             const model = await this.getModel(uri, toDispose);
-
             editor = this.createEditor((node, override) => new MonacoEditor(
                 uri, model, node, this.m2p, this.p2m, this.getEditorOptions(model), override
             ), toDispose);
@@ -132,11 +130,6 @@ export class MonacoEditorProvider {
             readOnly: model.readOnly
         };
 
-        Object.keys(this.editorPreferences).forEach(key => {
-            const value: any = (<any>this.editorPreferences)[key];
-            this.setOption(key, value, editorOptions);
-        });
-
         return editorOptions;
     }
 
@@ -145,12 +138,6 @@ export class MonacoEditorProvider {
             originalEditable: !original.readOnly,
             readOnly: modified.readOnly
         };
-    }
-
-    protected updateOptions(change: EditorPreferenceChange, editor: MonacoEditor): void {
-        const options: monaco.editor.IEditorOptions = {};
-        this.setOption(change.preferenceName, change.newValue, options);
-        editor.getControl().updateOptions(options);
     }
 
     protected installQuickOpenService(editor: MonacoEditor): void {

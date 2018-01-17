@@ -11,7 +11,6 @@ import {
 } from "monaco-languageclient";
 import { DisposableCollection } from "@theia/core/lib/common";
 import { FileChangeType, FileSystem, FileSystemWatcher } from '@theia/filesystem/lib/common';
-import { WorkspaceService } from "@theia/workspace/lib/browser";
 import { EditorManager } from "@theia/editor/lib/browser";
 import * as lang from "@theia/languages/lib/common";
 import { Emitter, Event, TextDocument, TextDocumentWillSaveEvent, TextEdit } from "@theia/languages/lib/common";
@@ -46,7 +45,6 @@ export class MonacoWorkspace extends BaseMonacoWorkspace implements lang.Workspa
 
     constructor(
         @inject(FileSystem) protected readonly fileSystem: FileSystem,
-        @inject(WorkspaceService) protected readonly workspaceService: WorkspaceService,
         @inject(FileSystemWatcher) protected readonly fileSystemWatcher: FileSystemWatcher,
         @inject(MonacoTextModelService) protected readonly textModelService: MonacoTextModelService,
         @inject(MonacoToProtocolConverter) protected readonly m2p: MonacoToProtocolConverter,
@@ -54,12 +52,6 @@ export class MonacoWorkspace extends BaseMonacoWorkspace implements lang.Workspa
         @inject(EditorManager) protected readonly editorManager: EditorManager
     ) {
         super(p2m, m2p);
-        workspaceService.root.then(rootStat => {
-            if (rootStat) {
-                this._rootUri = rootStat.uri;
-                this.resolveReady();
-            }
-        });
         monaco.editor.onDidCreateModel(model => {
             this.textModelService.createModelReference(model.uri).then(reference => {
                 reference.object.onDidSaveModel(model =>

@@ -8,8 +8,7 @@
 import { injectable, inject, decorate } from "inversify";
 import { MonacoLanguages as BaseMonacoLanguages, ProtocolToMonacoConverter, MonacoToProtocolConverter } from "monaco-languageclient";
 import { Languages, DiagnosticCollection, Language } from "@theia/languages/lib/common";
-import { ProblemManager } from "@theia/markers/lib/browser/problem/problem-manager";
-import URI from '@theia/core/lib/common/uri';
+// import URI from '@theia/core/lib/common/uri';
 import { WorkspaceSymbolProvider } from 'vscode-base-languageclient/lib/services';
 import { Disposable } from 'vscode-jsonrpc';
 
@@ -25,7 +24,6 @@ export class MonacoLanguages extends BaseMonacoLanguages implements Languages {
     constructor(
         @inject(ProtocolToMonacoConverter) p2m: ProtocolToMonacoConverter,
         @inject(MonacoToProtocolConverter) m2p: MonacoToProtocolConverter,
-        @inject(ProblemManager) protected readonly problemManager: ProblemManager
     ) {
         super(p2m, m2p);
     }
@@ -33,19 +31,15 @@ export class MonacoLanguages extends BaseMonacoLanguages implements Languages {
     createDiagnosticCollection(name?: string): DiagnosticCollection {
         // FIXME: Monaco model markers should be created based on Theia problem markers
         const monacoCollection = super.createDiagnosticCollection(name);
-        const owner = name || 'default';
+        // const owner = name || 'default';
         const uris: string[] = [];
         return {
             set: (uri, diagnostics) => {
                 monacoCollection.set(uri, diagnostics);
-                this.problemManager.setMarkers(new URI(uri), owner, diagnostics);
                 uris.push(uri);
             },
             dispose: () => {
                 monacoCollection.dispose();
-                for (const uri of uris) {
-                    this.problemManager.setMarkers(new URI(uri), owner, []);
-                }
             }
         };
     }

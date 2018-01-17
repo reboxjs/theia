@@ -61,18 +61,7 @@ export class ApplicationPackageManager {
     }
 
     async start(args: string[] = []): Promise<void> {
-        if (this.pck.isElectron()) {
-            return this.startElectron(args);
-        }
         return this.startBrowser(args);
-    }
-
-    async startElectron(args: string[]): Promise<void> {
-        return this.__process.bunyan(
-            this.__process.spawnBin('electron', [this.pck.frontend('electron-main.js'), ...args], {
-                stdio: [0, 'pipe', 'pipe']
-            })
-        );
     }
 
     async startBrowser(args: string[]): Promise<void> {

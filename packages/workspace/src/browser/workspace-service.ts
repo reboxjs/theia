@@ -31,7 +31,6 @@ export class WorkspaceService implements FrontendApplicationContribution {
             if (root) {
                 const uri = new URI(root.uri);
                 this.updateTitle(uri);
-                watcher.watchFileChanges(uri);
             }
         })();
     }
