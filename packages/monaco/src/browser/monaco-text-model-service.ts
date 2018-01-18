@@ -9,7 +9,6 @@ import { inject, injectable } from 'inversify';
 import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from 'monaco-languageclient';
 import URI from "@theia/core/lib/common/uri";
 import { DisposableCollection, Disposable, ResourceProvider } from "@theia/core/lib/common";
-// import { FileResource } from '@theia/filesystem/lib/common';
 import { MonacoEditorModel } from "./monaco-editor-model";
 
 @injectable()
@@ -22,7 +21,6 @@ export class MonacoTextModelService implements monaco.editor.ITextModelService {
         @inject(ResourceProvider) protected readonly resourceProvider: ResourceProvider,
         @inject(MonacoToProtocolConverter) protected readonly m2p: MonacoToProtocolConverter,
         @inject(ProtocolToMonacoConverter) protected readonly p2m: ProtocolToMonacoConverter,
-        // @inject(FileResource) protected fileResource: FileResource
     ) { }
 
     createModelReference(raw: monaco.Uri | URI): monaco.Promise<monaco.editor.IReference<MonacoEditorModel>> {

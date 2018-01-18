@@ -42,7 +42,7 @@ export interface OpenHandler {
      * Resolve to an opened widget or undefined, e.g. if a page is opened.
      * Never reject if `canHandle` return a positive number; otherwise should reject.
      */
-    open(uri: URI, options?: OpenerOptions): MaybePromise<object | undefined>;
+    open(options?: OpenerOptions): MaybePromise<object | undefined>;
 }
 
 export const OpenerService = Symbol("OpenerService");
@@ -65,12 +65,12 @@ export interface OpenerService {
      * Return an opener with the higher priority for the given URI.
      * Reject if such does not exist.
      */
-    getOpener(uri: URI, options?: OpenerOptions): Promise<OpenHandler>;
+    getOpener(options?: OpenerOptions): Promise<OpenHandler>;
 }
 
-export async function open(openerService: OpenerService, uri: URI, options?: OpenerOptions): Promise<object | undefined> {
-    const opener = await openerService.getOpener(uri);
-    return await opener.open(uri, options);
+export async function open(openerService: OpenerService, options?: OpenerOptions): Promise<object | undefined> {
+    const opener = await openerService.getOpener();
+    return await opener.open(options);
 }
 
 @injectable()
@@ -81,12 +81,12 @@ export class DefaultOpenerService implements OpenerService {
         protected readonly handlersProvider: ContributionProvider<OpenHandler>
     ) { }
 
-    async getOpener(uri: URI, options?: OpenerOptions): Promise<OpenHandler> {
-        const handlers = await this.prioritize(uri, options);
+    async getOpener(options?: OpenerOptions): Promise<OpenHandler> {
+        const handlers = this.getHandlers();
         if (handlers.length >= 1) {
             return handlers[0];
         }
-        return Promise.reject(`There is no opener for ${uri}.`);
+        return Promise.reject(`There is no opener.`);
     }
 
     async getOpeners(uri?: URI, options?: OpenerOptions): Promise<OpenHandler[]> {

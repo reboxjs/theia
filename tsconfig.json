@@ -45,9 +45,9 @@
       // "@theia/terminal/lib/*": [
       //   "packages/terminal/src/*"
       // ],
-      "@theia/languages/lib/*": [
-        "packages/languages/src/*"
-      ],
+      // "@theia/languages/lib/*": [
+      //   "packages/languages/src/*"
+      // ],
       "@theia/editor/lib/*": [
         "packages/editor/src/*"
       ],

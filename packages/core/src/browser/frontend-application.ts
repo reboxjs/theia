@@ -99,7 +99,7 @@ export class FrontendApplication {
     }
 
     protected async startContributions(): Promise<void> {
-
+        console.log('this.contributions.getContributions()', this.contributions.getContributions());
         for (const contribution of this.contributions.getContributions()) {
             if (contribution.initialize) {
                 try {

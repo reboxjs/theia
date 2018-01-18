@@ -6779,7 +6779,7 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-vscode-base-languageclient@^0.0.1-alpha.2, vscode-base-languageclient@^0.0.1-alpha.3:
+vscode-base-languageclient@^0.0.1-alpha.2:
   version "0.0.1-alpha.3"
   resolved "https://registry.yarnpkg.com/vscode-base-languageclient/-/vscode-base-languageclient-0.0.1-alpha.3.tgz#9b68a8e28a5c84c4e1298b69bedd356ed2e663be"
   dependencies:
@@ -6787,27 +6787,13 @@ vscode-base-languageclient@^0.0.1-alpha.2, vscode-base-languageclient@^0.0.1-alp
     vscode-languageserver-types "^3.2.0"
     vscode-uri "^1.0.0"
 
-vscode-jsonrpc@^3.2.0, vscode-jsonrpc@^3.3.0, vscode-jsonrpc@^3.5.0:
+vscode-jsonrpc@^3.2.0, vscode-jsonrpc@^3.3.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/vscode-jsonrpc/-/vscode-jsonrpc-3.5.0.tgz#87239d9e166b2d7352245b8a813597804c1d63aa"
 
-vscode-languageserver-protocol@^3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/vscode-languageserver-protocol/-/vscode-languageserver-protocol-3.5.0.tgz#067c5cbe27709795398d119692c97ebba1452209"
-  dependencies:
-    vscode-jsonrpc "^3.5.0"
-    vscode-languageserver-types "^3.5.0"
-
-vscode-languageserver-types@^3.2.0, vscode-languageserver-types@^3.4.0, vscode-languageserver-types@^3.5.0:
+vscode-languageserver-types@^3.2.0, vscode-languageserver-types@^3.4.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/vscode-languageserver-types/-/vscode-languageserver-types-3.5.0.tgz#e48d79962f0b8e02de955e3f524908e2b19c0374"
-
-vscode-languageserver@^3.4.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/vscode-languageserver/-/vscode-languageserver-3.5.0.tgz#d28099bc6ddda8c1dd16b707e454e1b1ddae0dba"
-  dependencies:
-    vscode-languageserver-protocol "^3.5.0"
-    vscode-uri "^1.0.1"
 
 vscode-uri@^1.0.0, vscode-uri@^1.0.1:
   version "1.0.1"

@@ -8,10 +8,9 @@
 import { injectable, inject } from "inversify";
 import { ProtocolToMonacoConverter } from "monaco-languageclient/lib";
 import { Command, CommandContribution } from '@theia/core';
-import { Position, Location } from "@theia/languages/lib/common";
 import { CommonCommands } from '@theia/core/lib/browser';
-import { EditorCommands } from '@theia/editor/lib/browser';
-import { MonacoEditor } from './monaco-editor';
+// import { EditorCommands } from '@theia/editor/lib/browser';
+// import { MonacoEditor } from './monaco-editor';
 import { MonacoCommandRegistry, MonacoEditorCommandHandler } from './monaco-command-registry';
 import MenuRegistry = monaco.actions.MenuRegistry;
 import MenuId = monaco.actions.MenuId;
@@ -86,7 +85,7 @@ export class MonacoEditorCommandHandlers implements CommandContribution {
 
     registerCommands(): void {
         this.registerCommonCommandHandlers();
-        this.registerEditorCommandHandlers();
+        // this.registerEditorCommandHandlers();
         this.registerMonacoActionCommands();
     }
 
@@ -103,22 +102,6 @@ export class MonacoEditorCommandHandlers implements CommandContribution {
     }
     protected isCommonKeyboardAction(action: string): boolean {
         return MonacoCommands.COMMON_KEYBOARD_ACTIONS.has(action);
-    }
-
-    protected registerEditorCommandHandlers(): void {
-        this.registry.registerHandler(EditorCommands.SHOW_REFERENCES.id, this.newShowReferenceHandler());
-    }
-    protected newShowReferenceHandler(): MonacoEditorCommandHandler {
-        return {
-            execute: (editor: MonacoEditor, uri: string, position: Position, locations: Location[]) => {
-                editor.commandService.executeCommand(
-                    'editor.action.showReferences',
-                    monaco.Uri.parse(uri),
-                    this.p2m.asPosition(position),
-                    locations.map(l => this.p2m.asLocation(l))
-                );
-            }
-        };
     }
 
     protected registerMonacoActionCommands(): void {

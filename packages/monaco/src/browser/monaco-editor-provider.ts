@@ -19,7 +19,6 @@ import { MonacoEditorModel } from './monaco-editor-model';
 import { MonacoEditorService } from './monaco-editor-service';
 import { MonacoQuickOpenService } from './monaco-quick-open-service';
 import { MonacoTextModelService } from './monaco-text-model-service';
-import { MonacoWorkspace } from './monaco-workspace';
 import { ThemeService } from '@theia/core/lib/browser/theming';
 
 import IEditorOverrideServices = monaco.editor.IEditorOverrideServices;
@@ -41,7 +40,6 @@ export class MonacoEditorProvider {
         @inject(MonacoContextMenuService) protected readonly contextMenuService: MonacoContextMenuService,
         @inject(MonacoToProtocolConverter) protected readonly m2p: MonacoToProtocolConverter,
         @inject(ProtocolToMonacoConverter) protected readonly p2m: ProtocolToMonacoConverter,
-        @inject(MonacoWorkspace) protected readonly workspace: MonacoWorkspace,
         @inject(MonacoCommandServiceFactory) protected readonly commandServiceFactory: MonacoCommandServiceFactory,
         @inject(MonacoQuickOpenService) protected readonly quickOpenService: MonacoQuickOpenService
     ) { }

@@ -8,14 +8,12 @@
 import { ContainerModule, decorate, injectable } from "inversify";
 import { MenuContribution, CommandContribution, KeybindingContribution } from "@theia/core/lib/common";
 import { QuickOpenService, FrontendApplicationContribution } from "@theia/core/lib/browser";
-import { Languages, Workspace } from "@theia/languages/lib/common";
 import { TextEditorProvider } from "@theia/editor/lib/browser";
 import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from "monaco-languageclient";
 import { MonacoEditorProvider } from './monaco-editor-provider';
 import { MonacoEditorMenuContribution } from './monaco-menu';
 import { MonacoEditorCommandHandlers } from "./monaco-command";
 import { MonacoKeybindingContribution } from "./monaco-keybinding";
-import { MonacoLanguages } from "./monaco-languages";
 import { MonacoWorkspace } from "./monaco-workspace";
 import { MonacoEditorService } from "./monaco-editor-service";
 import { MonacoTextModelService } from "./monaco-text-model-service";
@@ -36,11 +34,7 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
     bind(MonacoToProtocolConverter).toSelf().inSingletonScope();
     bind(ProtocolToMonacoConverter).toSelf().inSingletonScope();
 
-    bind(MonacoLanguages).toSelf().inSingletonScope();
-    bind(Languages).toDynamicValue(ctx => ctx.container.get(MonacoLanguages));
-
     bind(MonacoWorkspace).toSelf().inSingletonScope();
-    bind(Workspace).toDynamicValue(ctx => ctx.container.get(MonacoWorkspace));
 
     bind(MonacoEditorService).toSelf().inSingletonScope();
     bind(MonacoTextModelService).toSelf().inSingletonScope();

@@ -26,7 +26,7 @@ export interface EditorManager extends OpenHandler {
      * Open an editor for the given uri and input.
      * Reject if the given input is not an editor input or an editor cannot be opened.
      */
-    open(uri: URI, input?: EditorInput): Promise<EditorWidget>;
+    open(input?: EditorInput): Promise<EditorWidget>;
     /**
      * The most recently focused editor.
      */
@@ -94,8 +94,8 @@ export class EditorManagerImpl implements EditorManager, WidgetFactory {
         return 100;
     }
 
-    open(uri: URI, input?: EditorInput): Promise<EditorWidget> {
-        return this.widgetManager.getOrCreateWidget<EditorWidget>(this.id, uri.toString()).then(editor => {
+    open(input?: EditorInput): Promise<EditorWidget> {
+        return this.widgetManager.getOrCreateWidget<EditorWidget>(this.id).then(editor => {
             if (!editor.isAttached) {
                 this.app.shell.addToMainArea(editor);
             }
