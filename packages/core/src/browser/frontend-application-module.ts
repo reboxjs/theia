@@ -22,17 +22,12 @@ import { FrontendApplication, FrontendApplicationContribution } from './frontend
 import { DefaultOpenerService, OpenerService, OpenHandler } from './opener-service';
 import { CommonFrontendContribution } from './common-frontend-contribution';
 import { QuickOpenService, QuickCommandService, QuickCommandFrontendContribution } from './quick-open';
-import { LocalStorageService, StorageService } from './storage-service';
 import { WidgetFactory, WidgetManager } from './widget-manager';
 import { ShellLayoutRestorer } from './shell-layout-restorer';
 import { ApplicationShell, ApplicationShellOptions, DockPanelRenderer, DockPanelTabBarRenderer, DockPanelTabBarRendererFactory } from './shell';
-import { StatusBar, StatusBarImpl } from "./status-bar/status-bar";
-import { LabelParser } from './label-parser';
-import { LabelProvider, LabelProviderContribution, DefaultUriLabelProviderContribution } from "./label-provider";
 
 import '../../src/browser/style/index.css';
 import 'font-awesome/css/font-awesome.min.css';
-import { ThemingCommandContribution, ThemeService } from './theming';
 
 export const frontendApplicationModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     bind(FrontendApplication).toSelf().inSingletonScope();
@@ -88,19 +83,4 @@ export const frontendApplicationModule = new ContainerModule((bind, unbind, isBo
     [CommandContribution, KeybindingContribution].forEach(serviceIdentifier =>
         bind(serviceIdentifier).toDynamicValue(ctx => ctx.container.get(QuickCommandFrontendContribution)).inSingletonScope()
     );
-
-    bind(StorageService).to(LocalStorageService).inSingletonScope();
-
-    bind(StatusBarImpl).toSelf().inSingletonScope();
-    bind(StatusBar).toDynamicValue(ctx => ctx.container.get(StatusBarImpl)).inSingletonScope();
-    bind(LabelParser).toSelf().inSingletonScope();
-
-    bindContributionProvider(bind, LabelProviderContribution);
-    bind(LabelProvider).toSelf().inSingletonScope();
-    bind(LabelProviderContribution).to(DefaultUriLabelProviderContribution).inSingletonScope();
-
-    bind(CommandContribution).to(ThemingCommandContribution).inSingletonScope();
 });
-
-const theme = ThemeService.get().getCurrentTheme().id;
-ThemeService.get().setCurrentTheme(theme);

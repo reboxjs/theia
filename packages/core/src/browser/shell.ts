@@ -28,7 +28,6 @@ import { VirtualElement, h } from '@phosphor/virtualdom';
 import { MenuPath } from "../common";
 import { Saveable } from "./saveable";
 import { ContextMenuRenderer } from "./context-menu-renderer";
-import { StatusBarImpl, StatusBarLayoutData } from "./status-bar/status-bar";
 
 export const ApplicationShellOptions = Symbol("ApplicationShellOptions");
 
@@ -56,7 +55,7 @@ export interface LayoutData {
     mainArea?: DockLayoutData;
     leftBar?: SideBarData;
     rightBar?: SideBarData;
-    statusBar?: StatusBarLayoutData;
+    // statusBar?: StatusBarLayoutData;
 }
 
 export interface SideBarData {
@@ -145,7 +144,7 @@ export class ApplicationShell extends Widget {
      */
     constructor(
         @inject(DockPanelRenderer) dockPanelRenderer: DockPanelRenderer,
-        @inject(StatusBarImpl) protected readonly _statusBar: StatusBarImpl,
+        // @inject(StatusBarImpl) protected readonly _statusBar: StatusBarImpl,
         @inject(ApplicationShellOptions) @optional() options?: Widget.IOptions | undefined
     ) {
         super(options);
@@ -201,11 +200,11 @@ export class ApplicationShell extends Widget {
 
         BoxLayout.setStretch(topPanel, 0);
         BoxLayout.setStretch(hboxPanel, 1);
-        BoxLayout.setStretch(_statusBar, 0);
+        // BoxLayout.setStretch(_statusBar, 0);
 
         rootLayout.addWidget(topPanel);
         rootLayout.addWidget(hboxPanel);
-        rootLayout.addWidget(_statusBar);
+        // rootLayout.addWidget(_statusBar);
 
         this.layout = rootLayout;
 
@@ -222,7 +221,7 @@ export class ApplicationShell extends Widget {
             },
             leftBar: this._leftHandler.getLayoutData(),
             rightBar: this._rightHandler.getLayoutData(),
-            statusBar: this._statusBar.getLayoutData()
+            // statusBar: this._statusBar.getLayoutData()
         };
     }
 
@@ -239,7 +238,7 @@ export class ApplicationShell extends Widget {
             }
             this._leftHandler.setLayoutData(layoutData.leftBar);
             this._rightHandler.setLayoutData(layoutData.rightBar);
-            this._statusBar.setLayoutData(layoutData.statusBar);
+            // this._statusBar.setLayoutData(layoutData.statusBar);
         }
     }
 

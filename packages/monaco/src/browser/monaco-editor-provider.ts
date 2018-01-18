@@ -19,17 +19,8 @@ import { MonacoEditorModel } from './monaco-editor-model';
 import { MonacoEditorService } from './monaco-editor-service';
 import { MonacoQuickOpenService } from './monaco-quick-open-service';
 import { MonacoTextModelService } from './monaco-text-model-service';
-import { ThemeService } from '@theia/core/lib/browser/theming';
 
 import IEditorOverrideServices = monaco.editor.IEditorOverrideServices;
-
-function changeTheme(editorTheme: string | undefined) {
-    const monacoTheme = editorTheme || 'vs-dark';
-    monaco.editor.setTheme(monacoTheme);
-    document.body.classList.add(monacoTheme);
-}
-changeTheme(ThemeService.get().getCurrentTheme().editorTheme);
-ThemeService.get().onThemeChange(event => changeTheme(event.newTheme.editorTheme));
 
 @injectable()
 export class MonacoEditorProvider {

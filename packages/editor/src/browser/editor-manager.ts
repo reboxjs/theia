@@ -13,7 +13,6 @@ import { EditorWidget } from "./editor-widget";
 import { TextEditorProvider, Range, Position } from "./editor";
 import { WidgetFactory, WidgetManager } from '@theia/core/lib/browser/widget-manager';
 import { Widget } from '@phosphor/widgets';
-import { LabelProvider } from "@theia/core/lib/browser/label-provider";
 
 export const EditorManager = Symbol("EditorManager");
 
@@ -64,7 +63,6 @@ export class EditorManagerImpl implements EditorManager, WidgetFactory {
         @inject(SelectionService) protected readonly selectionService: SelectionService,
         @inject(FrontendApplication) protected readonly app: FrontendApplication,
         @inject(WidgetManager) protected readonly widgetManager: WidgetManager,
-        @inject(LabelProvider) protected readonly labelProvider: LabelProvider
     ) {
         this.currentObserver = new EditorManagerImpl.Observer('current', app);
         this.activeObserver = new EditorManagerImpl.Observer('active', app);

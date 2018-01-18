@@ -6,12 +6,10 @@
  */
 
 import { ContainerModule } from 'inversify';
-// import { ResourceResolver } from '@theia/core/lib/common';
 import { WebSocketConnectionProvider } from '@theia/core/lib/browser';
 import {
     FileSystem,
     FileSystemWatcher,
-    // FileResourceResolver,
     fileSystemPath,
 } from "../common";
 import {
@@ -36,7 +34,4 @@ export default new ContainerModule(bind => {
         ctx.container.get(FileSystemListener).listen(filesystem);
         return filesystem;
     }).inSingletonScope();
-
-    // bind(FileResourceResolver).toSelf().inSingletonScope();
-    // bind(ResourceResolver).toDynamicValue(ctx => ctx.container.get(FileResourceResolver));
 });

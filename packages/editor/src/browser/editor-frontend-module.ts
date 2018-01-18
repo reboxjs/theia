@@ -12,14 +12,11 @@ import {
 } from "@theia/core/lib/common";
 import {
     OpenHandler, WidgetFactory,
-    // FrontendApplicationContribution
 } from '@theia/core/lib/browser';
 import { EditorManagerImpl, EditorManager } from './editor-manager';
 import { EditorMenuContribution } from './editor-menu';
 import { EditorCommandContribution } from './editor-command';
 import { EditorKeybindingContribution, EditorKeybindingContext } from "./editor-keybinding";
-import { LabelProviderContribution } from '@theia/core/lib/browser/label-provider';
-import { DiffUriLabelProviderContribution } from './diff-uris';
 
 export default new ContainerModule(bind => {
     bind(EditorManagerImpl).toSelf().inSingletonScope();
@@ -33,6 +30,4 @@ export default new ContainerModule(bind => {
 
     bind(KeybindingContext).toDynamicValue(context => context.container.get(EditorKeybindingContext)).inSingletonScope();
     bind(KeybindingContribution).to(EditorKeybindingContribution).inSingletonScope();
-
-    bind(LabelProviderContribution).to(DiffUriLabelProviderContribution).inSingletonScope();
 });

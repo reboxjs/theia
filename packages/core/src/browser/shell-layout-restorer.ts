@@ -5,13 +5,10 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 import { injectable, inject } from 'inversify';
-import { FrontendApplication, FrontendApplicationContribution } from './frontend-application';
 import { WidgetManager, WidgetConstructionOptions } from './widget-manager';
-import { StorageService } from './storage-service';
 import { LayoutData } from './shell';
 import { Widget } from '@phosphor/widgets';
 import { ILogger } from '../common/logger';
-import { CommandContribution, CommandRegistry } from '../common/command';
 
 /**
  * A contract for widgets that want to store and restore their inner state, between sessions.
@@ -42,54 +39,14 @@ interface WidgetDescription {
 }
 
 @injectable()
-export class ShellLayoutRestorer implements CommandContribution {
-    private storageKey = 'layout';
-    private shouldStoreLayout: boolean = true;
+export class ShellLayoutRestorer {
 
     constructor(
         @inject(WidgetManager) protected widgetManager: WidgetManager,
         @inject(ILogger) protected logger: ILogger,
-        @inject(StorageService) protected storageService: StorageService) { }
+    ) { }
 
-    registerCommands(commands: CommandRegistry): void {
-        commands.registerCommand({
-            id: 'reset.layout',
-            label: 'Reset Workbench Layout'
-        }, {
-                execute: () => {
-                    this.shouldStoreLayout = false;
-                    this.storageService.setData(this.storageKey, undefined)
-                        .then(() => window.location.reload());
-                }
-            });
-    }
-
-    async initializeLayout(app: FrontendApplication, contributions: FrontendApplicationContribution[]): Promise<void> {
-        const serializedLayoutData = await this.storageService.getData<string>(this.storageKey);
-        console.log('serializedLayoutData', serializedLayoutData);
-        if (serializedLayoutData !== undefined) {
-            await this.inflate(serializedLayoutData).then(layoutData => {
-                app.shell.setLayoutData(layoutData);
-            });
-        } else {
-            for (const initializer of contributions) {
-                if (initializer.initializeLayout) {
-                    await initializer.initializeLayout(app);
-                }
-            }
-        }
-    }
-
-    storeLayout(app: FrontendApplication): void {
-        if (this.shouldStoreLayout) {
-            try {
-                const layoutData = app.shell.getLayoutData();
-                this.storageService.setData(this.storageKey, this.deflate(layoutData));
-            } catch (error) {
-                this.storageService.setData(this.storageKey, undefined);
-                this.logger.error(`Error during serialization of layout data: ${error}`);
-            }
-        }
+    registerCommands(commands: any): void {
     }
 
     protected isWidgetsProperty(property: string) {

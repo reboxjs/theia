@@ -36,12 +36,6 @@ export interface FrontendApplicationContribution {
      * Note that this is implemented using `window.unload` which doesn't allow any asynchronous code anymore. I.e. this is the last tick.
      */
     onStop?(app: FrontendApplication): void;
-
-    /**
-     * called after start, when there is no previous workbench layout state.
-     * Should return a promise if it runs asynchronously.
-     */
-    initializeLayout?(app: FrontendApplication): MaybePromise<void>;
 }
 
 @injectable()
@@ -72,7 +66,6 @@ export class FrontendApplication {
      */
     async start(): Promise<void> {
         this.startContributions();
-        await this.layoutRestorer.initializeLayout(this, this.contributions.getContributions());
         this.ensureLoaded().then(() =>
             this.attachShell()
         );
@@ -99,7 +92,6 @@ export class FrontendApplication {
     }
 
     protected async startContributions(): Promise<void> {
-        console.log('this.contributions.getContributions()', this.contributions.getContributions());
         for (const contribution of this.contributions.getContributions()) {
             if (contribution.initialize) {
                 try {
@@ -129,7 +121,6 @@ export class FrontendApplication {
         }
 
         window.onunload = () => {
-            this.layoutRestorer.storeLayout(this);
             for (const contribution of this.contributions.getContributions()) {
                 if (contribution.onStop) {
                     try {
