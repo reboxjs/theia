@@ -49,7 +49,7 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
     bind(MonacoCommandService).toSelf().inTransientScope();
     bind(MonacoCommandServiceFactory).toAutoFactory(MonacoCommandService);
     bind(TextEditorProvider).toProvider(context =>
-        uri => context.container.get(MonacoEditorProvider).get(uri)
+        () => context.container.get(MonacoEditorProvider).get()
     );
 
     bind(MonacoOutlineContribution).toSelf().inSingletonScope();

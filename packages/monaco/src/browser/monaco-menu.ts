@@ -73,17 +73,5 @@ export class MonacoEditorMenuContribution implements MenuContribution {
                 registry.registerMenuAction(menuPath, { commandId });
             }
         }
-
-        registry.registerSubmenu(MonacoMenus.SELECTION, 'Selection');
-        for (const group of MonacoMenus.SELECTION_GROUPS) {
-            group.actions.forEach((action, index) => {
-                const commandId = this.commands.validate(action);
-                if (commandId) {
-                    const path = [...MonacoMenus.SELECTION, group.id];
-                    const order = index.toString();
-                    registry.registerMenuAction(path, { commandId, order });
-                }
-            });
-        }
     }
 }

@@ -7,7 +7,7 @@
 
 import { DisposableCollection } from '@theia/core/lib/common';
 import URI from '@theia/core/lib/common/uri';
-import { DiffUris } from '@theia/editor/lib/browser/diff-uris';
+// import { DiffUris } from '@theia/editor/lib/browser/diff-uris';
 import { inject, injectable } from 'inversify';
 import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from 'monaco-languageclient';
 
@@ -54,8 +54,6 @@ export class MonacoEditorProvider {
     }
 
     protected createEditor(create: (n: HTMLDivElement, o: IEditorOverrideServices) => MonacoEditor, toDispose: DisposableCollection): MonacoEditor {
-        console.log('createEditor');
-
         const node = document.createElement('div');
         const commandService = this.commandServiceFactory();
         const { editorService, textModelService, contextMenuService } = this;
@@ -76,33 +74,16 @@ export class MonacoEditorProvider {
         return editor;
     }
 
-    async get(uri: URI): Promise<MonacoEditor> {
+    async get(): Promise<MonacoEditor> {
 
         let editor: MonacoEditor;
         const toDispose = new DisposableCollection();
 
-        if (!DiffUris.isDiffUri(uri)) {
-            const model = await this.getModel(uri, toDispose);
-            editor = this.createEditor((node, override) => new MonacoEditor(
-                uri, model, node, this.m2p, this.p2m, this.getEditorOptions(model), override
-            ), toDispose);
+        editor = this.createEditor((node, override) => new MonacoEditor(
+            node, this.m2p, this.p2m, override
+        ), toDispose);
 
-        } else {
-            const [original, modified] = DiffUris.decode(uri);
-
-            const originalModel = await this.getModel(original, toDispose);
-            const modifiedModel = await this.getModel(modified, toDispose);
-
-            editor = this.createEditor((node, override) => new MonacoDiffEditor(
-                node,
-                originalModel,
-                modifiedModel,
-                this.m2p,
-                this.p2m,
-                this.getDiffEditorOptions(originalModel, modifiedModel),
-                override
-            ), toDispose);
-        }
+        console.log('editor', editor);
 
         return Promise.resolve(editor);
     }

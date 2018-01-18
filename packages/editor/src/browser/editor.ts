@@ -16,7 +16,7 @@ export {
 };
 
 export const TextEditorProvider = Symbol('TextEditorProvider');
-export type TextEditorProvider = (uri: URI) => Promise<TextEditor>;
+export type TextEditorProvider = () => Promise<TextEditor>;
 
 export interface TextEditorDocument extends lsp.TextDocument, Saveable, Disposable {
 }
@@ -24,8 +24,8 @@ export interface TextEditorDocument extends lsp.TextDocument, Saveable, Disposab
 export interface TextEditor extends Disposable, TextEditorSelection {
     readonly node: HTMLElement;
 
-    readonly uri: URI;
-    readonly document: TextEditorDocument;
+    // readonly uri: URI;
+    // readonly document: TextEditorDocument;
     readonly onDocumentContentChanged: Event<TextEditorDocument>;
 
     cursor: Position;
@@ -59,7 +59,7 @@ export interface Dimension {
 }
 
 export interface TextEditorSelection {
-    uri: URI
+    // uri: URI
     cursor?: Position
     selection?: Range
 }

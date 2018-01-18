@@ -7,7 +7,6 @@
 
 import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from "monaco-languageclient";
 import { ElementExt } from "@phosphor/domutils";
-import URI from "@theia/core/lib/common/uri";
 import { DisposableCollection, Disposable, Emitter, Event } from "@theia/core/lib/common";
 import {
     Dimension,
@@ -18,13 +17,11 @@ import {
     TextEditorDocument,
     TextEditor
 } from '@theia/editor/lib/browser';
-import { MonacoEditorModel } from "./monaco-editor-model";
 
 import IEditorConstructionOptions = monaco.editor.IEditorConstructionOptions;
 import IEditorOverrideServices = monaco.editor.IEditorOverrideServices;
 import IStandaloneCodeEditor = monaco.editor.IStandaloneCodeEditor;
 import IBoxSizing = ElementExt.IBoxSizing;
-import IEditorReference = monaco.editor.IEditorReference;
 
 export namespace MonacoEditor {
     export interface ICommonOptions {
@@ -66,7 +63,7 @@ export function get(editorWidget: EditorWidget | undefined) {
     return undefined;
 }
 
-export class MonacoEditor implements TextEditor, IEditorReference {
+export class MonacoEditor implements TextEditor {
 
     protected readonly toDispose = new DisposableCollection();
 
@@ -80,23 +77,21 @@ export class MonacoEditor implements TextEditor, IEditorReference {
     protected readonly onDocumentContentChangedEmitter = new Emitter<TextEditorDocument>();
 
     constructor(
-        readonly uri: URI,
-        readonly document: MonacoEditorModel,
         readonly node: HTMLElement,
         protected readonly m2p: MonacoToProtocolConverter,
         protected readonly p2m: ProtocolToMonacoConverter,
-        options?: MonacoEditor.IOptions,
         override?: IEditorOverrideServices,
     ) {
-        this.autoSizing = options && options.autoSizing !== undefined ? options.autoSizing : false;
-        this.minHeight = options && options.minHeight !== undefined ? options.minHeight : -1;
-        this.toDispose.push(this.create(options, override));
+        this.toDispose.push(this.create(override));
+        this.autoSizing = false;
+        this.minHeight = -1;
         this.addHandlers(this.editor);
     }
 
-    protected create(options?: IEditorConstructionOptions, override?: monaco.editor.IEditorOverrideServices): Disposable {
+    //  protected create(options?: IEditorConstructionOptions, override?: monaco.editor.IEditorOverrideServices): Disposable {
+    protected create(override?: monaco.editor.IEditorOverrideServices): Disposable {
+        console.log('override', override);
         return this.editor = monaco.editor.create(this.node, {
-            ...options,
             fixedOverflowWidgets: true,
             scrollbar: {
                 useShadows: false,
@@ -113,7 +108,8 @@ export class MonacoEditor implements TextEditor, IEditorReference {
         this.toDispose.push(codeEditor.onDidChangeModel(e => this.refresh()));
         this.toDispose.push(codeEditor.onDidChangeModelContent(() => {
             this.refresh();
-            this.onDocumentContentChangedEmitter.fire(this.document);
+            console.log('onDidChangeModelContent');
+            // this.onDocumentContentChangedEmitter.fire(this.document);
         }));
         this.toDispose.push(codeEditor.onDidChangeCursorPosition(() =>
             this.onCursorPositionChangedEmitter.fire(this.cursor)

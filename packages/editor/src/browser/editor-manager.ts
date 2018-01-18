@@ -106,20 +106,17 @@ export class EditorManagerImpl implements EditorManager, WidgetFactory {
     }
 
     // don't call directly, but use WidgetManager
-    createWidget(uriAsString: string): Promise<Widget> {
-        const uri = new URI(uriAsString);
-        return this.createEditor(uri);
+    createWidget(): Promise<Widget> {
+        return this.createEditor();
     }
 
-    protected async createEditor(uri: URI): Promise<EditorWidget> {
-        const icon = await this.labelProvider.getIcon(uri);
-        return this.editorProvider(uri).then(textEditor => {
+    protected async createEditor(): Promise<EditorWidget> {
+        return this.editorProvider().then(textEditor => {
             const newEditor = new EditorWidget(textEditor, this.selectionService);
-            newEditor.id = this.id + ":" + uri.toString();
+            newEditor.id = this.id;
             newEditor.title.closable = true;
-            newEditor.title.label = this.labelProvider.getName(uri);
-            newEditor.title.iconClass = icon + ' file-icon';
-            newEditor.title.caption = this.labelProvider.getLongName(uri);
+            newEditor.title.label = 'New document';
+            newEditor.title.caption = 'New document';
             return newEditor;
         });
     }

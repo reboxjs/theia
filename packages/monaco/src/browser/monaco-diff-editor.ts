@@ -6,7 +6,7 @@
  */
 
 import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from 'monaco-languageclient';
-import URI from '@theia/core/lib/common/uri';
+// import URI from '@theia/core/lib/common/uri';
 import { Disposable, DisposableCollection } from '@theia/core/lib/common';
 import { Dimension } from '@theia/editor/lib/browser';
 import { MonacoEditorModel } from './monaco-editor-model';
@@ -34,7 +34,8 @@ export class MonacoDiffEditor extends MonacoEditor {
         options?: MonacoDiffEditor.IOptions,
         override?: IEditorOverrideServices,
     ) {
-        super(new URI(''), modifiedModel, node, m2p, p2m, options, override);
+        // super(new URI(''), modifiedModel, node, m2p, p2m, options, override);
+        super(node, m2p, p2m, override);
         const original = originalModel.textEditorModel;
         const modified = modifiedModel.textEditorModel;
         this.diffEditor.setModel({ original, modified });

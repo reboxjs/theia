@@ -157,6 +157,7 @@ class DynamicMenuWidget extends MenuWidget {
                 });
             }
         }
+
     }
 }
 

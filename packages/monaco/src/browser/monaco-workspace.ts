@@ -152,7 +152,7 @@ export class MonacoWorkspace extends BaseMonacoWorkspace implements lang.Workspa
                     range: new monaco.Range(range.startLineNumber, range.startColumn, range.endLineNumber, range.endColumn),
                     text: edit.newText
                 }], (edits) => selections);
-                const editor = this.editorManager.editors.find(editor => editor.editor.uri.toString() === model.uri.toString());
+                const editor = this.editorManager.editors[0]; // .find(editor => editor.editor.uri.toString() === model.uri.toString());
                 if (editor) {
                     editor.editor.focus();
                 }
