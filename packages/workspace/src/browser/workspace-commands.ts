@@ -8,33 +8,16 @@
 import { inject, injectable } from 'inversify';
 import URI from "@theia/core/lib/common/uri";
 import { SelectionService } from '@theia/core/lib/common';
-import { Command, CommandContribution, CommandHandler, CommandRegistry } from '@theia/core/lib/common/command';
-import { MenuContribution, MenuModelRegistry } from '@theia/core/lib/common/menu';
-import { CommonMenus } from "@theia/core/lib/browser/common-frontend-contribution";
-import { FileSystem, FileStat } from '@theia/filesystem/lib/common/filesystem';
+import {
+    CommandContribution, CommandHandler, CommandRegistry
+} from '@theia/core/lib/common/command';
+import { FileSystem } from '@theia/filesystem/lib/common/filesystem';
 import { UriSelection } from '@theia/filesystem/lib/common/filesystem-selection';
-import { SingleTextInputDialog } from "@theia/core/lib/browser/dialogs";
-import { OpenerService, open, FrontendApplication } from "@theia/core/lib/browser";
+import {
+    OpenerService,
+    FrontendApplication
+} from "@theia/core/lib/browser";
 import { WorkspaceService } from './workspace-service';
-
-const validFilename = require('valid-filename');
-
-export namespace WorkspaceCommands {
-    export const NEW_FILE: Command = {
-        id: 'file.newFile',
-        label: 'New File'
-    };
-}
-
-@injectable()
-export class FileMenuContribution implements MenuContribution {
-
-    registerMenus(registry: MenuModelRegistry) {
-        registry.registerMenuAction(CommonMenus.FILE_NEW, {
-            commandId: WorkspaceCommands.NEW_FILE.id
-        });
-    }
-}
 
 @injectable()
 export class WorkspaceCommandContribution implements CommandContribution {
@@ -47,23 +30,6 @@ export class WorkspaceCommandContribution implements CommandContribution {
     ) { }
 
     registerCommands(registry: CommandRegistry): void {
-        registry.registerCommand(WorkspaceCommands.NEW_FILE, this.newWorkspaceHandler({
-            execute: uri => this.getDirectory(uri).then(parent => {
-                const parentUri = new URI(parent.uri);
-                const vacantChildUri = this.findVacantChildUri(parentUri, parent, 'Untitled', '.txt');
-                const dialog = new SingleTextInputDialog({
-                    title: `New File`,
-                    initialValue: vacantChildUri.path.base,
-                    validate: name => this.validateFileName(name, parent)
-                });
-                dialog.open().then(name => {
-                    const fileUri = parentUri.resolve(name);
-                    this.fileSystem.createFile(fileUri.toString()).then(() => {
-                        open(this.openerService, fileUri);
-                    });
-                });
-            })
-        }));
     }
 
     protected newFileHandler(handler: UriCommandHandler): FileSystemCommandHandler {
@@ -72,49 +38,6 @@ export class WorkspaceCommandContribution implements CommandContribution {
 
     protected newWorkspaceHandler(handler: UriCommandHandler): WorkspaceRootAwareCommandHandler {
         return new WorkspaceRootAwareCommandHandler(this.workspaceService, this.selectionService, handler);
-    }
-
-    /**
-     * returns an error message or an empty string if the file name is valid
-     * @param name the simple file name to validate
-     * @param parent the parent directory's file stat
-     */
-    protected validateFileName(name: string, parent: FileStat): string {
-        if (!validFilename(name)) {
-            return "Invalid name, try other";
-        }
-        if (parent.children) {
-            for (const child of parent.children) {
-                if (new URI(child.uri).path.base === name) {
-                    return 'A file with this name already exists.';
-                }
-            }
-        }
-        return '';
-    }
-
-    protected async getDirectory(candidate: URI): Promise<FileStat> {
-        const stat = await this.fileSystem.getFileStat(candidate.toString());
-        if (stat.isDirectory) {
-            return stat;
-        }
-        return this.getParent(candidate);
-    }
-
-    protected getParent(candidate: URI): Promise<FileStat> {
-        return this.fileSystem.getFileStat(candidate.parent.toString());
-    }
-
-    protected findVacantChildUri(parentUri: URI, parent: FileStat, name: string, ext: string = ''): URI {
-        const children = !parent.children ? [] : parent.children!.map(child => new URI(child.uri));
-
-        let index = 1;
-        let base = name + ext;
-        while (children.some(child => child.path.base === base)) {
-            index = index + 1;
-            base = name + '_' + index + ext;
-        }
-        return parentUri.resolve(base);
     }
 }
 

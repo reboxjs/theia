@@ -32,14 +32,6 @@
     white-space: nowrap;
 }
 
-.theia-ExpansionToggle.theia-mod-collapsed {
-    background: url('../icons/collapse.svg') center center no-repeat;
-}
-
-.theia-ExpansionToggle:not(.theia-mod-collapsed) {
-    background: url('../icons/expand.svg') center center no-repeat;
-}
-
 .theia-Tree:focus .theia-TreeNode.theia-mod-selected {
     background:var(--theia-accent-color3);
 }

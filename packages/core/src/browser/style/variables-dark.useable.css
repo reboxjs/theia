@@ -146,12 +146,6 @@ all of MD as it is not optimized for dense, information rich UIs.
   --theia-disabled-color2: var(--md-blue-grey-300);
   --theia-disabled-color3: var(--md-blue-grey-100);
 
-  /* icons */
-  --theia-icon-close: url(../icons/close-dark.svg);
-  --theia-sprite-y-offset: -20px;
-  --theia-icon-circle: url(../icons/circle-dark.svg);
-  --theia-preloader: url(../icons/spinner.gif);
-
   /* scrollbars */
   --theia-scrollbar-thumb-color: var(--theia-layout-color4);
   --theia-scrollbar-color: var(--theia-layout-color3);

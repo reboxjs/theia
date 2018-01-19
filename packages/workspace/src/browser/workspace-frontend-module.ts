@@ -6,11 +6,15 @@
  */
 
 import { ContainerModule, interfaces } from 'inversify';
-import { CommandContribution, MenuContribution } from "@theia/core/lib/common";
+import {
+    CommandContribution,
+} from "@theia/core/lib/common";
 import { WebSocketConnectionProvider, FrontendApplicationContribution } from '@theia/core/lib/browser';
 import { WorkspaceServer, workspacePath } from '../common';
 import { WorkspaceService } from './workspace-service';
-import { WorkspaceCommandContribution, FileMenuContribution } from './workspace-commands';
+import {
+    WorkspaceCommandContribution,
+} from './workspace-commands';
 
 export default new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind, isBound: interfaces.IsBound, rebind: interfaces.Rebind) => {
     bind(WorkspaceService).toSelf().inSingletonScope();
@@ -21,5 +25,4 @@ export default new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Un
     }).inSingletonScope();
 
     bind(CommandContribution).to(WorkspaceCommandContribution).inSingletonScope();
-    bind(MenuContribution).to(FileMenuContribution).inSingletonScope();
 });
