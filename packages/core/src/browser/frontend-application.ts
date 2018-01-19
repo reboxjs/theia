@@ -12,6 +12,7 @@ import { Widget } from "./widgets";
 import { ILogger } from '../common';
 import { MaybePromise } from '../common/types';
 import { ShellLayoutRestorer } from './shell-layout-restorer';
+import { WidgetManager } from './widget-manager';
 
 /**
  * Clients can implement to get a callback for contributing widgets to a shell on start.
@@ -50,6 +51,7 @@ export class FrontendApplication {
         @inject(ContributionProvider) @named(FrontendApplicationContribution)
         protected readonly contributions: ContributionProvider<FrontendApplicationContribution>,
         @inject(ApplicationShell) protected readonly _shell: ApplicationShell,
+        @inject(WidgetManager) protected widgetManager: WidgetManager,
     ) { }
 
     get shell(): ApplicationShell {
@@ -66,6 +68,18 @@ export class FrontendApplication {
      */
     async start(): Promise<void> {
         this.startContributions();
+
+        const widget = await this.widgetManager.getOrCreateWidget('code-editor-opener')
+            .then(editor => {
+                if (!editor.isAttached) {
+                    this.shell.addToMainArea(editor);
+                }
+
+                return editor;
+            });
+
+        this.shell.addToMainArea(widget);
+
         this.ensureLoaded().then(() =>
             this.attachShell()
         );
