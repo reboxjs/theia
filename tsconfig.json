@@ -18,9 +18,9 @@
       // "@theia/extension-manager/lib/*": [
       //   "packages/extension-manager/src/*"
       // ],
-      "@theia/filesystem/lib/*": [
-        "packages/filesystem/src/*"
-      ],
+      // "@theia/filesystem/lib/*": [
+      //   "packages/filesystem/src/*"
+      // ],
       "mv": [
         "packages/filesystem/src/typings/mv"
       ],

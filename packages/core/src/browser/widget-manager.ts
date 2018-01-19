@@ -8,7 +8,7 @@
 import { inject, named, injectable } from 'inversify';
 import { Widget } from '@phosphor/widgets';
 import { ContributionProvider } from '../common/contribution-provider';
-import { ILogger } from '../common';
+// import { ILogger } from '../common';
 
 // tslint:disable:no-any
 export const WidgetFactory = Symbol("WidgetFactory");
@@ -56,7 +56,8 @@ export class WidgetManager {
 
     constructor(
         @inject(ContributionProvider) @named(WidgetFactory) protected readonly factoryProvider: ContributionProvider<WidgetFactory>,
-        @inject(ILogger) protected logger: ILogger) {
+        // @inject(ILogger) protected logger: ILogger
+    ) {
     }
 
     getWidgets(factoryId: string): Widget[] {
@@ -121,7 +122,7 @@ export class WidgetManager {
                 if (f.id) {
                     this._cachedfactories.set(f.id, f);
                 } else {
-                    this.logger.error("Factory id cannot be undefined : " + f);
+                    // this.logger.error("Factory id cannot be undefined : " + f);
                 }
             }
         }

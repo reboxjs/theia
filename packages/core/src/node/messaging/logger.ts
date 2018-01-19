@@ -5,24 +5,24 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Logger } from "vscode-jsonrpc";
+// import { Logger } from "vscode-jsonrpc";
 
-export class ConsoleLogger implements Logger {
+// export class ConsoleLogger implements Logger {
 
-    error(message: string): void {
-        console.log(message);
-    }
+//     error(message: string): void {
+//         console.log(message);
+//     }
 
-    warn(message: string): void {
-        console.log(message);
-    }
+//     warn(message: string): void {
+//         console.log(message);
+//     }
 
-    info(message: string): void {
-        console.log(message);
-    }
+//     info(message: string): void {
+//         console.log(message);
+//     }
 
-    log(message: string): void {
-        console.log(message);
-    }
+//     log(message: string): void {
+//         console.log(message);
+//     }
 
-}
+// }

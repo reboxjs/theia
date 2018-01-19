@@ -6,7 +6,9 @@
  */
 
 import { ContainerModule, interfaces } from "inversify";
-import { bindContributionProvider, MessageService, MessageClient } from '../common';
+import {
+    bindContributionProvider,
+} from '../common';
 import { BackendApplication, BackendApplicationContribution, BackendApplicationCliContribution } from './backend-application';
 import { CliManager, CliContribution } from './cli';
 import { ServerProcess, RemoteMasterProcessFactory, clusterRemoteMasterProcessFactory } from './cluster';
@@ -29,9 +31,6 @@ export const backendApplicationModule = new ContainerModule(bind => {
     bindContributionProvider(bind, BackendApplicationContribution);
 
     bindServerProcess(bind, clusterRemoteMasterProcessFactory);
-
-    bind(MessageClient).toSelf().inSingletonScope();
-    bind(MessageService).toSelf().inSingletonScope();
 
     bind(IPCConnectionProvider).toSelf().inSingletonScope();
 });

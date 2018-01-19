@@ -9,9 +9,8 @@ import { inject, injectable, named } from 'inversify';
 import { ContributionProvider, CommandRegistry, KeybindingRegistry, MenuModelRegistry } from '../common';
 import { ApplicationShell } from './shell';
 import { Widget } from "./widgets";
-import { ILogger } from '../common';
+// import { ILogger } from '../common';
 import { MaybePromise } from '../common/types';
-import { ShellLayoutRestorer } from './shell-layout-restorer';
 import { WidgetManager } from './widget-manager';
 
 /**
@@ -46,8 +45,8 @@ export class FrontendApplication {
         @inject(CommandRegistry) protected readonly commands: CommandRegistry,
         @inject(MenuModelRegistry) protected readonly menus: MenuModelRegistry,
         @inject(KeybindingRegistry) protected readonly keybindings: KeybindingRegistry,
-        @inject(ILogger) protected readonly logger: ILogger,
-        @inject(ShellLayoutRestorer) protected readonly layoutRestorer: ShellLayoutRestorer,
+        // @inject(ILogger) protected readonly logger: ILogger,
+        // @inject(ShellLayoutRestorer) protected readonly layoutRestorer: ShellLayoutRestorer,
         @inject(ContributionProvider) @named(FrontendApplicationContribution)
         protected readonly contributions: ContributionProvider<FrontendApplicationContribution>,
         @inject(ApplicationShell) protected readonly _shell: ApplicationShell,
@@ -111,7 +110,7 @@ export class FrontendApplication {
                 try {
                     contribution.initialize();
                 } catch (err) {
-                    this.logger.error(err.toString());
+                    // this.logger.error(err.toString());
                 }
             }
         }
@@ -129,7 +128,7 @@ export class FrontendApplication {
                 try {
                     await contribution.onStart(this);
                 } catch (err) {
-                    this.logger.error(err.toString());
+                    // this.logger.error(err.toString());
                 }
             }
         }
@@ -140,7 +139,7 @@ export class FrontendApplication {
                     try {
                         contribution.onStop(this);
                     } catch (err) {
-                        this.logger.error(err.toString());
+                        // this.logger.error(err.toString());
                     }
                 }
             }

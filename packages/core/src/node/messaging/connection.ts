@@ -11,8 +11,9 @@ import * as https from "https";
 import * as url from "url";
 import * as net from "net";
 import { MessageConnection } from "vscode-jsonrpc";
-import { createWebSocketConnection, IWebSocket } from "vscode-ws-jsonrpc";
-import { ConsoleLogger } from "./logger";
+import {
+    IWebSocket
+} from "vscode-ws-jsonrpc";
 
 export interface IServerOptions {
     readonly server: http.Server | https.Server;
@@ -22,9 +23,6 @@ export interface IServerOptions {
 
 export function createServerWebSocketConnection(options: IServerOptions, onConnect: (connection: MessageConnection) => void): void {
     openJsonRpcSocket(options, socket => {
-        const logger = new ConsoleLogger();
-        const connection = createWebSocketConnection(socket, logger);
-        onConnect(connection);
     });
 }
 

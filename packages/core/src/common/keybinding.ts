@@ -9,7 +9,6 @@ import { injectable, inject, named } from 'inversify';
 import { CommandRegistry } from './command';
 import { KeyCode, Accelerator } from './keys';
 import { ContributionProvider } from './contribution-provider';
-import { ILogger } from "./logger";
 
 export interface Keybinding {
     readonly commandId: string;
@@ -133,7 +132,7 @@ export class KeybindingRegistry {
         @inject(KeybindingContextRegistry) protected readonly contextRegistry: KeybindingContextRegistry,
         @inject(ContributionProvider) @named(KeybindingContribution)
         protected readonly contributions: ContributionProvider<KeybindingContribution>,
-        @inject(ILogger) protected readonly logger: ILogger
+        // @inject(ILogger) protected readonly logger: ILogger
     ) {
         for (let i = KeybindingScope.DEFAULT; i < KeybindingScope.END; i++) { this.keymaps.push([]); }
     }
@@ -160,7 +159,7 @@ export class KeybindingRegistry {
         if (existingBindings.length > 0) {
             const collided = existingBindings.filter(b => b.contextId === binding.contextId);
             if (collided.length > 0) {
-                this.logger.warn('Collided keybinding is ignored; ', Keybinding.stringify(binding), ' collided with ', collided.map(b => Keybinding.stringify(b)).join(', '));
+                // this.logger.warn('Collided keybinding is ignored; ', Keybinding.stringify(binding), ' collided with ', collided.map(b => Keybinding.stringify(b)).join(', '));
                 return;
             }
         }
@@ -353,7 +352,7 @@ export class KeybindingRegistry {
                     return;
                 }
             } else {
-                this.logger.warn(`Invalid command id:  ${rawKeyBinding.command} does not exist, no command will be bound to keybinding: ${rawKeyBinding.keybinding}`);
+                // this.logger.warn(`Invalid command id:  ${rawKeyBinding.command} does not exist, no command will be bound to keybinding: ${rawKeyBinding.keybinding}`);
                 return;
             }
         }

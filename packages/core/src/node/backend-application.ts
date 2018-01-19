@@ -10,7 +10,9 @@ import * as https from 'https';
 import * as express from 'express';
 import * as yargs from 'yargs';
 import { inject, named, injectable } from "inversify";
-import { ILogger, ContributionProvider } from '../common';
+import {
+    ContributionProvider
+} from '../common';
 import { CliContribution } from './cli';
 import { Deferred } from '../common/promise-util';
 import * as fs from "fs-extra";
@@ -70,15 +72,15 @@ export class BackendApplication {
         @inject(ContributionProvider) @named(BackendApplicationContribution)
         protected readonly contributionsProvider: ContributionProvider<BackendApplicationContribution>,
         @inject(BackendApplicationCliContribution) protected readonly cliParams: BackendApplicationCliContribution,
-        @inject(ILogger) protected readonly logger: ILogger
+        // @inject(ILogger) protected readonly logger: ILogger
     ) {
         process.on('uncaughtException', error => {
-            if (error) {
-                logger.error('Uncaught Exception: ', error.toString());
-                if (error.stack) {
-                    logger.error(error.stack);
-                }
-            }
+            // if (error) {
+            //     logger.error('Uncaught Exception: ', error.toString());
+            //     if (error.stack) {
+            //         logger.error(error.stack);
+            //     }
+            // }
         });
 
         // Handles normal process termination.
@@ -93,7 +95,7 @@ export class BackendApplication {
                 try {
                     contribution.initialize();
                 } catch (err) {
-                    this.logger.error(err.toString());
+                    // this.logger.error(err.toString());
                 }
             }
         }
@@ -103,7 +105,7 @@ export class BackendApplication {
                 try {
                     contribution.configure(this.app);
                 } catch (err) {
-                    this.logger.error(err.toString());
+                    // this.logger.error(err.toString());
                 }
             }
         }
@@ -134,14 +136,14 @@ export class BackendApplication {
             try {
                 key = await fs.readFile(this.cliParams.certkey as string);
             } catch (err) {
-                await this.logger.error(`Can't read certificate key`);
+                // await this.logger.error(`Can't read certificate key`);
                 throw err;
             }
 
             try {
                 cert = await fs.readFile(this.cliParams.cert as string);
             } catch (err) {
-                await this.logger.error(`Can't read certificate`);
+                // await this.logger.error(`Can't read certificate`);
                 throw err;
             }
             server = https.createServer({ key, cert }, this.app);
@@ -150,8 +152,8 @@ export class BackendApplication {
         }
 
         server.listen(port, hostname, () => {
-            const scheme = this.cliParams.ssl ? 'https' : 'http';
-            this.logger.info(`Theia app listening on ${scheme}://${hostname || 'localhost'}:${server.address().port}.`);
+            // const scheme = this.cliParams.ssl ? 'https' : 'http';
+            // this.logger.info(`Theia app listening on ${scheme}://${hostname || 'localhost'}:${server.address().port}.`);
             deferred.resolve(server);
         });
 
@@ -163,7 +165,7 @@ export class BackendApplication {
                 try {
                     contrib.onStart(server);
                 } catch (err) {
-                    this.logger.error(err.toString());
+                    // this.logger.error(err.toString());
                 }
             }
         }
@@ -176,7 +178,7 @@ export class BackendApplication {
                 try {
                     contrib.onStop(this.app);
                 } catch (err) {
-                    this.logger.error(err);
+                    // this.logger.error(err);
                 }
             }
         }

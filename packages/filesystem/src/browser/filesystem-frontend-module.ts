@@ -6,32 +6,12 @@
  */
 
 import { ContainerModule } from 'inversify';
-import { WebSocketConnectionProvider } from '@theia/core/lib/browser';
-import {
-    FileSystem,
-    FileSystemWatcher,
-    fileSystemPath,
-} from "../common";
-import {
-    fileSystemWatcherPath, FileSystemWatcherServer,
-    FileSystemWatcherServerProxy, ReconnectingFileSystemWatcherServer
-} from '../common/filesystem-watcher-protocol';
-import { FileSystemListener } from './filesystem-listener';
+// import {
+//     FileSystemWatcher,
+// } from "../common";
 
 import "../../src/browser/style/index.css";
 
 export default new ContainerModule(bind => {
-
-    bind(FileSystemWatcherServerProxy).toDynamicValue(ctx =>
-        WebSocketConnectionProvider.createProxy(ctx.container, fileSystemWatcherPath)
-    );
-    bind(FileSystemWatcherServer).to(ReconnectingFileSystemWatcherServer);
-    bind(FileSystemWatcher).toSelf().inSingletonScope();
-
-    bind(FileSystemListener).toSelf().inSingletonScope();
-    bind(FileSystem).toDynamicValue(ctx => {
-        const filesystem = WebSocketConnectionProvider.createProxy<FileSystem>(ctx.container, fileSystemPath);
-        ctx.container.get(FileSystemListener).listen(filesystem);
-        return filesystem;
-    }).inSingletonScope();
+    // bind(FileSystemWatcher).toSelf().inSingletonScope();
 });

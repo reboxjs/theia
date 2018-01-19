@@ -8,8 +8,6 @@
 // tslint:disable:no-any
 import cluster = require('cluster');
 import { JsonRpcProxyFactory, JsonRpcProxy } from '../../common/messaging';
-import { ConsoleLogger } from '../messaging/logger';
-import { createWorkerConnection } from './worker-connection';
 
 /**
  * The cluster master process.
@@ -32,10 +30,7 @@ export interface IServerProcess {
 }
 
 export function createWorkerProxy<T extends object>(worker: cluster.Worker, target: any): JsonRpcProxy<T> {
-    const logger = new ConsoleLogger();
-    const connection = createWorkerConnection(worker, logger);
     const factory = new JsonRpcProxyFactory<T>(target);
-    factory.listen(connection);
     return factory.createProxy();
 }
 

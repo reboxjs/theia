@@ -10,10 +10,8 @@ import { MAIN_MENU_BAR, MenuContribution, MenuModelRegistry } from '../common/me
 import { KeybindingContribution, KeybindingRegistry } from '../common/keybinding';
 import { KeyCode, Key, Modifier } from '../common/keys';
 import { CommandContribution, CommandRegistry, Command } from '../common/command';
-import { MessageService } from '../common/message-service';
 import { ApplicationShell } from './shell';
 import * as browser from './browser';
-import { MAINAREA_TABBAR_CONTEXT_MENU } from './shell';
 
 export namespace CommonMenus {
 
@@ -102,59 +100,13 @@ export class CommonFrontendContribution implements MenuContribution, CommandCont
 
     constructor(
         @inject(ApplicationShell) protected readonly shell: ApplicationShell,
-        @inject(MessageService) protected readonly messageService: MessageService
+        // @inject(MessageService) protected readonly messageService: MessageService
     ) { }
 
     registerMenus(registry: MenuModelRegistry): void {
-        registry.registerSubmenu(CommonMenus.FILE, 'File');
-
-        registry.registerMenuAction(MAINAREA_TABBAR_CONTEXT_MENU, {
-            commandId: CommonCommands.CLOSE_TAB.id,
-            order: '0'
-        });
-        registry.registerMenuAction(MAINAREA_TABBAR_CONTEXT_MENU, {
-            commandId: CommonCommands.CLOSE_OTHER_TABS.id,
-            order: '1'
-        });
-        registry.registerMenuAction(MAINAREA_TABBAR_CONTEXT_MENU, {
-            commandId: CommonCommands.CLOSE_RIGHT_TABS.id,
-            order: '2'
-        });
-        registry.registerMenuAction(MAINAREA_TABBAR_CONTEXT_MENU, {
-            commandId: CommonCommands.CLOSE_ALL_TABS.id,
-            order: '3'
-        });
     }
 
     registerCommands(commandRegistry: CommandRegistry): void {
-        commandRegistry.registerCommand(CommonCommands.CUT, {
-            execute: () => {
-                if (supportCut) {
-                    document.execCommand('cut');
-                } else {
-                    this.messageService.warn("Please use the browser's cut command or shortcut.");
-                }
-            }
-        });
-        commandRegistry.registerCommand(CommonCommands.COPY, {
-            execute: () => {
-                if (supportCopy) {
-                    document.execCommand('copy');
-                } else {
-                    this.messageService.warn("Please use the browser's copy command or shortcut.");
-                }
-            }
-        });
-        commandRegistry.registerCommand(CommonCommands.PASTE, {
-            execute: () => {
-                if (supportPaste) {
-                    document.execCommand('paste');
-                } else {
-                    this.messageService.warn("Please use the browser's paste command or shortcut.");
-                }
-            }
-        });
-
         commandRegistry.registerCommand(CommonCommands.UNDO);
         commandRegistry.registerCommand(CommonCommands.REDO);
 

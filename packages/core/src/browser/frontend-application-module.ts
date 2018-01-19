@@ -15,15 +15,12 @@ import {
     KeybindingContextRegistry, KeybindingRegistry,
     KeybindingContext,
     KeybindingContribution,
-    MessageService,
-    MessageClient
 } from "../common";
 import { FrontendApplication, FrontendApplicationContribution } from './frontend-application';
 import { DefaultOpenerService, OpenerService, OpenHandler } from './opener-service';
 import { CommonFrontendContribution } from './common-frontend-contribution';
 import { QuickOpenService, QuickCommandService, QuickCommandFrontendContribution } from './quick-open';
 import { WidgetFactory, WidgetManager } from './widget-manager';
-import { ShellLayoutRestorer } from './shell-layout-restorer';
 import { ApplicationShell, ApplicationShellOptions, DockPanelRenderer, DockPanelTabBarRenderer, DockPanelTabBarRendererFactory } from './shell';
 
 import '../../src/browser/style/index.css';
@@ -46,8 +43,6 @@ export const frontendApplicationModule = new ContainerModule((bind, unbind, isBo
 
     bindContributionProvider(bind, WidgetFactory);
     bind(WidgetManager).toSelf().inSingletonScope();
-    bind(ShellLayoutRestorer).toSelf().inSingletonScope();
-    bind(CommandContribution).toDynamicValue(ctx => ctx.container.get(ShellLayoutRestorer));
 
     bind(DefaultResourceProvider).toSelf().inSingletonScope();
     bind(ResourceProvider).toProvider(context =>
@@ -68,9 +63,6 @@ export const frontendApplicationModule = new ContainerModule((bind, unbind, isBo
 
     bind(KeybindingContextRegistry).toSelf().inSingletonScope();
     bindContributionProvider(bind, KeybindingContext);
-
-    bind(MessageClient).toSelf().inSingletonScope();
-    bind(MessageService).toSelf().inSingletonScope();
 
     bind(CommonFrontendContribution).toSelf().inSingletonScope();
     [CommandContribution, KeybindingContribution, MenuContribution].forEach(serviceIdentifier =>
